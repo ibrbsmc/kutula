@@ -1,13 +1,16 @@
-import { Button } from "@/components/ui/button";
+import { Route, Routes } from "react-router";
+import AppLayout from "@/components/layout/AppLayout";
+import DashboardPage from "@/features/dashboard/DashboardPage";
+import RoomsPage from "@/features/rooms/RoomsPage";
 
 function App() {
   return (
-    <>
-      <main className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <h1 className="text-4xl font-bold">Kutula</h1>
-        <Button>Yeni Kutu Ekle</Button>
-      </main>
-    </>
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route index element={<DashboardPage />} />
+        <Route path="odalar" element={<RoomsPage />} />
+      </Route>
+    </Routes>
   );
 }
 
