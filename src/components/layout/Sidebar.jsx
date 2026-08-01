@@ -1,4 +1,4 @@
-import { House, DoorOpen, Package } from "lucide-react";
+import { House, DoorOpen, Package, PackageOpen } from "lucide-react";
 import { NavLink } from "react-router";
 
 function Sidebar() {
@@ -27,6 +27,11 @@ function Sidebar() {
         <NavLink to="/kutular" className={linkClass}>
           <Package size={20} />
           Kutular
+        </NavLink>
+
+        <NavLink to="/esyalar" className={linkClass}>
+          <PackageOpen size={20} />
+          Eşyalar
         </NavLink>
       </nav>
     </aside>

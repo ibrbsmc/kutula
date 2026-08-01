@@ -1,4 +1,4 @@
-import { DoorOpen, House, Package } from "lucide-react";
+import { DoorOpen, House, Package, PackageOpen } from "lucide-react";
 import { NavLink } from "react-router";
 
 function MobileNav() {
@@ -24,6 +24,11 @@ function MobileNav() {
           <NavLink to="/kutular" className={linkClass}>
             <Package size={22} />
             <span className="sr-only">Kutular</span>
+          </NavLink>
+
+          <NavLink to="/esyalar" className={linkClass}>
+            <PackageOpen size={22} />
+            <span className="sr-only">Eşyalar</span>
           </NavLink>
         </nav>
       </div>
