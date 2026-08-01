@@ -11,6 +11,7 @@ function BoxForm({
   setBoxStatus,
   editingBoxId,
   error,
+  setError,
   onSubmit,
   onCancelEdit,
 }) {
@@ -25,7 +26,10 @@ function BoxForm({
           id="room"
           required
           value={selectedRoomId}
-          onChange={(e) => setSelectedRoomId(e.target.value)}
+          onChange={(e) => {
+            setSelectedRoomId(e.target.value);
+            setError("");
+          }}
           className="h-9 w-full rounded-md border bg-background px-3 text-sm"
           disabled={rooms.length === 0}
         >
@@ -55,7 +59,10 @@ function BoxForm({
           required
           placeholder="Örneğin: 1"
           value={boxNumber}
-          onChange={(e) => setBoxNumber(e.target.value)}
+          onChange={(e) => {
+            setBoxNumber(e.target.value);
+            setError("");
+          }}
         />
       </div>
 

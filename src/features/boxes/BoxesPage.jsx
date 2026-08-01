@@ -128,6 +128,7 @@ function BoxesPage() {
         setBoxStatus={setBoxStatus}
         editingBoxId={editingBoxId}
         error={error}
+        setError={setError}
         onSubmit={handleSubmit}
         onCancelEdit={handleCancelEdit}
       />
