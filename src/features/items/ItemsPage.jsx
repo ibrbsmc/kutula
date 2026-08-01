@@ -55,6 +55,11 @@ function ItemsPage() {
     setError("");
   }
 
+  function handleDeleteItem(itemId) {
+    const updatedItems = items.filter((item) => item.id !== itemId);
+    setItems(updatedItems);
+  }
+
   return (
     <section className="space-y-6">
       <div>
@@ -79,7 +84,12 @@ function ItemsPage() {
         isValuable={isValuable}
         setIsValuable={setIsValuable}
       />
-      <ItemList items={items} boxes={boxes} rooms={rooms} />
+      <ItemList
+        items={items}
+        boxes={boxes}
+        rooms={rooms}
+        onDeleteItem={handleDeleteItem}
+      />
     </section>
   );
 }
