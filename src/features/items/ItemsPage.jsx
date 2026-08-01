@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import ItemForm from "./components/ItemForm";
+import ItemList from "./components/ItemList";
 
 function ItemsPage() {
   const [rooms] = useState(() => {
@@ -70,6 +71,7 @@ function ItemsPage() {
         setError={setError}
         onSubmit={handleSubmit}
       />
+      <ItemList items={items} boxes={boxes} rooms={rooms} />
     </section>
   );
 }
