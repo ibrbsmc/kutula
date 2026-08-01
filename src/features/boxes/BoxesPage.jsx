@@ -19,6 +19,9 @@ function BoxesPage() {
 
   const [error, setError] = useState("");
   const [editingBoxId, setEditingBoxId] = useState(null);
+  const [boxStatus, setBoxStatus] = useState("Hazırlanıyor");
+  const [statusFilter, setStatusFilter] = useState("Tümü");
+  const [roomFilter, setRoomFilter] = useState("Tümü");
 
   useEffect(() => {
     localStorage.setItem("kutula-boxes", JSON.stringify(boxes));
@@ -48,6 +51,7 @@ function BoxesPage() {
               ...box,
               roomId: Number(selectedRoomId),
               number: numericBoxNumber,
+              status: boxStatus,
             }
           : box,
       );
@@ -59,7 +63,7 @@ function BoxesPage() {
         id: Date.now(),
         roomId: Number(selectedRoomId),
         number: numericBoxNumber,
-        status: "Hazırlanıyor",
+        status: boxStatus,
       };
 
       setBoxes([...boxes, newBox]);
@@ -67,6 +71,7 @@ function BoxesPage() {
 
     setSelectedRoomId("");
     setBoxNumber("");
+    setBoxStatus("Hazırlanıyor");
     setError("");
   };
 
@@ -81,8 +86,27 @@ function BoxesPage() {
     setSelectedRoomId(String(boxToEdit.roomId));
     setBoxNumber(String(boxToEdit.number));
     setEditingBoxId(boxId);
+    setBoxStatus(boxToEdit.status);
     setError("");
   };
+
+  const handleCancelEdit = () => {
+    setEditingBoxId(null);
+    setSelectedRoomId("");
+    setBoxNumber("");
+    setBoxStatus("Hazırlanıyor");
+    setError("");
+  };
+
+  const filteredBoxes = boxes.filter((box) => {
+    const matchesStatus =
+      statusFilter === "Tümü" || box.status === statusFilter;
+
+    const matchesRoom =
+      roomFilter === "Tümü" || String(box.roomId) === String(roomFilter);
+
+    return matchesStatus && matchesRoom;
+  });
 
   return (
     <div className="space-y-6">
@@ -136,20 +160,89 @@ function BoxesPage() {
             onChange={(e) => setBoxNumber(e.target.value)}
           />
         </div>
-        <Button type="submit" disabled={rooms.length === 0}>
-          Kutu Ekle
-        </Button>
+        <div className="space-y-2">
+          <label htmlFor="box-status" className="text-sm font-medium">
+            Durum
+          </label>
+
+          <select
+            id="box-status"
+            value={boxStatus}
+            onChange={(e) => setBoxStatus(e.target.value)}
+            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+          >
+            <option value="Hazırlanıyor">Hazırlanıyor</option>
+            <option value="Taşınmaya Hazır">Taşınmaya Hazır</option>
+            <option value="Taşındı">Taşındı</option>
+            <option value="Açıldı">Açıldı</option>
+          </select>
+        </div>
+        <div className="flex gap-2">
+          <Button type="submit" disabled={rooms.length === 0}>
+            {editingBoxId !== null ? "Değişiklikleri Kaydet" : "Kutu Ekle"}
+          </Button>
+
+          {editingBoxId !== null && (
+            <Button type="button" variant="outline" onClick={handleCancelEdit}>
+              Vazgeç
+            </Button>
+          )}
+        </div>
       </form>
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">
           Kayıtlı Kutular ({boxes.length})
         </h2>
 
-        {boxes.length === 0 ? (
-          <p className="text-muted-foreground">Henüz kutu eklenmedi.</p>
+        <div className="max-w-xs space-y-2">
+          <label htmlFor="status-filter" className="text-sm font-medium">
+            Duruma Göre Filtrele
+          </label>
+
+          <select
+            id="status-filter"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+          >
+            <option value="Tümü">Tümü</option>
+            <option value="Hazırlanıyor">Hazırlanıyor</option>
+            <option value="Taşınmaya Hazır">Taşınmaya Hazır</option>
+            <option value="Taşındı">Taşındı</option>
+            <option value="Açıldı">Açıldı</option>
+          </select>
+        </div>
+
+        <div className="max-w-xs space-y-2">
+          <label htmlFor="room-filter" className="text-sm font-medium">
+            Odaya Göre Filtrele
+          </label>
+
+          <select
+            id="room-filter"
+            value={roomFilter}
+            onChange={(e) => setRoomFilter(e.target.value)}
+            className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+          >
+            <option value="Tümü">Tüm Odalar</option>
+
+            {rooms.map((room) => (
+              <option key={room.id} value={room.id}>
+                {room.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {filteredBoxes.length === 0 ? (
+          <p className="text-muted-foreground">
+            {boxes.length === 0
+              ? "Henüz kutu eklenmedi."
+              : "Bu filtreye uygun kutu bulunamadı."}
+          </p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {boxes.map((box) => {
+            {filteredBoxes.map((box) => {
               const room = rooms.find(
                 (room) => String(room.id) === String(box.roomId),
               );
