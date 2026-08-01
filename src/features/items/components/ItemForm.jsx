@@ -15,6 +15,8 @@ function ItemForm({
   setIsFragile,
   isValuable,
   setIsValuable,
+  quantity,
+  setQuantity,
 }) {
   return (
     <form className="max-w-md space-y-4" onSubmit={onSubmit} noValidate>
@@ -68,6 +70,24 @@ function ItemForm({
         />
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
+
+      <div className="space-y-2">
+        <label htmlFor="item-quantity" className="text-sm font-medium">
+          Adet
+        </label>
+
+        <Input
+          id="item-quantity"
+          type="number"
+          min="1"
+          step="1"
+          value={quantity}
+          onChange={(e) => {
+            setQuantity(e.target.value);
+            setError("");
+          }}
+        />
+      </div>
 
       <div className="space-y-3">
         <label className="flex items-center gap-2 text-sm">

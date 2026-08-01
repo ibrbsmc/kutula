@@ -24,6 +24,7 @@ function ItemsPage() {
   const [error, setError] = useState("");
   const [isFragile, setIsFragile] = useState(false);
   const [isValuable, setIsValuable] = useState(false);
+  const [quantity, setQuantity] = useState("1");
 
   useEffect(() => {
     localStorage.setItem("kutula-items", JSON.stringify(items));
@@ -40,18 +41,25 @@ function ItemsPage() {
       setError("Lütfen bir eşya adı girin.");
       return;
     }
+    const parsedQuantity = Number(quantity);
+    if (!Number.isInteger(parsedQuantity) || parsedQuantity < 1) {
+      setError("Eşya en az bir adet ve tam sayı olmalıdır.");
+      return;
+    }
     const newItem = {
       id: Date.now(),
       boxId: Number(selectedBoxId),
       name: cleanedItemName,
       isFragile, // Eşya kırılabilir mi?
       isValuable, // Eşya değerli mi?
+      quantity: parsedQuantity,
     };
     setItems([...items, newItem]);
     setItemName("");
     setSelectedBoxId("");
     setIsFragile(false);
     setIsValuable(false);
+    setQuantity("1");
     setError("");
   }
 
@@ -83,6 +91,8 @@ function ItemsPage() {
         setIsFragile={setIsFragile}
         isValuable={isValuable}
         setIsValuable={setIsValuable}
+        quantity={quantity}
+        setQuantity={setQuantity}
       />
       <ItemList
         items={items}
