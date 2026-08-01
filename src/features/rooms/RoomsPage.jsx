@@ -11,6 +11,7 @@ function RoomsPage() {
   const [roomName, setRoomName] = useState("");
   const [editingRoomId, setEditingRoomId] = useState(null);
   const [error, setError] = useState("");
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     localStorage.setItem("kutula-rooms", JSON.stringify(rooms));
@@ -68,9 +69,20 @@ function RoomsPage() {
   }
 
   function handleDelete(roomId) {
+    const savedBoxes = localStorage.getItem("kutula-boxes");
+    const boxes = savedBoxes ? JSON.parse(savedBoxes) : [];
+
+    const roomHasBoxes = boxes.some((box) => box.roomId === roomId);
+
+    if (roomHasBoxes) {
+      setDeleteError("Bu odada kayıtlı kutular olduğu için oda silinemez.");
+      return;
+    }
+
     const updatedRooms = rooms.filter((room) => room.id !== roomId);
 
     setRooms(updatedRooms);
+    setDeleteError("");
   }
 
   function handleEdit(room) {
@@ -94,7 +106,6 @@ function RoomsPage() {
           Taşınma kutularını yerleştirebileceğin odaları oluştur.
         </p>
       </div>
-
       <RoomForm
         roomName={roomName}
         setRoomName={setRoomName}
@@ -104,8 +115,12 @@ function RoomsPage() {
         onSubmit={handleSubmit}
         onCancelEdit={handleCancelEdit}
       />
-
-      <RoomList rooms={rooms} onEdit={handleEdit} onDelete={handleDelete} />
+      {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
+      <RoomList
+        rooms={rooms}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />{" "}
     </section>
   );
 }
