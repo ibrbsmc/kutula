@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 function BoxesPage() {
@@ -10,10 +11,14 @@ function BoxesPage() {
 
   const [selectedRoomId, setSelectedRoomId] = useState("");
   const [boxNumber, setBoxNumber] = useState("");
+
   const [boxes, setBoxes] = useState(() => {
     const savedBoxes = localStorage.getItem("kutula-boxes");
     return savedBoxes ? JSON.parse(savedBoxes) : [];
   });
+
+  const [error, setError] = useState("");
+  const [editingBoxId, setEditingBoxId] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("kutula-boxes", JSON.stringify(boxes));
@@ -21,15 +26,62 @@ function BoxesPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newBox = {
-      id: Date.now(),
-      roomId: selectedRoomId,
-      number: Number(boxNumber),
-      status: "Hazırlanıyor",
-    };
-    setBoxes([...boxes, newBox]);
+
+    const numericBoxNumber = Number(boxNumber);
+
+    const boxAlreadyExists = boxes.some(
+      (box) =>
+        box.id !== editingBoxId &&
+        String(box.roomId) === String(selectedRoomId) &&
+        box.number === numericBoxNumber,
+    );
+
+    if (boxAlreadyExists) {
+      setError("Bu odada aynı numaraya sahip bir kutu zaten var.");
+      return;
+    }
+
+    if (editingBoxId !== null) {
+      const updatedBoxes = boxes.map((box) =>
+        box.id === editingBoxId
+          ? {
+              ...box,
+              roomId: Number(selectedRoomId),
+              number: numericBoxNumber,
+            }
+          : box,
+      );
+
+      setBoxes(updatedBoxes);
+      setEditingBoxId(null);
+    } else {
+      const newBox = {
+        id: Date.now(),
+        roomId: Number(selectedRoomId),
+        number: numericBoxNumber,
+        status: "Hazırlanıyor",
+      };
+
+      setBoxes([...boxes, newBox]);
+    }
+
     setSelectedRoomId("");
     setBoxNumber("");
+    setError("");
+  };
+
+  const handleDelete = (boxId) => {
+    const updatedBoxes = boxes.filter((box) => box.id !== boxId);
+    setBoxes(updatedBoxes);
+  };
+
+  const handleEdit = (boxId) => {
+    const boxToEdit = boxes.find((box) => box.id === boxId);
+
+    setSelectedRoomId(String(boxToEdit.roomId));
+    setBoxNumber(String(boxToEdit.number));
+    setEditingBoxId(boxId);
+    setError("");
   };
 
   return (
@@ -72,6 +124,8 @@ function BoxesPage() {
             Kutu Numarası
           </label>
 
+          {error && <p className="text-sm text-destructive">{error}</p>}
+
           <Input
             id="box-number"
             type="number"
@@ -111,6 +165,27 @@ function BoxesPage() {
                   <p className="text-sm text-muted-foreground">
                     Durum: {box.status}
                   </p>
+                  <div className="flex">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEdit(box.id)}
+                      aria-label={`Kutu ${box.number} düzenle`}
+                    >
+                      <Pencil className="size-4" />
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(box.id)}
+                      aria-label={`Kutu ${box.number} sil`}
+                    >
+                      <Trash2 className="size-4 text-destructive" />
+                    </Button>
+                  </div>
                 </div>
               );
             })}
