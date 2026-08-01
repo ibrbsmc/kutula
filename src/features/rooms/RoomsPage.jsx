@@ -24,7 +24,6 @@ function RoomsPage() {
       setError("Oda adı boş bırakılamaz.");
       return;
     }
-    setError("");
 
     const normalizedRoomName = cleanedRoomName.toLocaleLowerCase("tr-TR");
 
@@ -44,7 +43,7 @@ function RoomsPage() {
 
     setError("");
 
-    if (editingRoomId) {
+    if (editingRoomId !== null) {
       const updatedRooms = rooms.map((room) => {
         if (room.id === editingRoomId) {
           return {
@@ -109,12 +108,16 @@ function RoomsPage() {
           />
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
-        <Button type="submit">{editingRoomId ? "Kaydet" : "Ekle"}</Button>
-        {editingRoomId && (
-          <Button type="button" variant="outline" onClick={handleCancelEdit}>
-            İptal
+        <div className="flex gap-1.5">
+          <Button type="submit">
+            {editingRoomId !== null ? "Kaydet" : "Ekle"}
           </Button>
-        )}
+          {editingRoomId !== null && (
+            <Button type="button" variant="outline" onClick={handleCancelEdit}>
+              İptal
+            </Button>
+          )}
+        </div>
       </form>
 
       {rooms.length === 0 ? (
