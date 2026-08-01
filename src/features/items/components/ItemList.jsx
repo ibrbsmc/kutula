@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
-function ItemList({ items, boxes, rooms, onDeleteItem }) {
+function ItemList({ items, boxes, rooms, onEditItem, onDeleteItem }) {
   const totalItemCount = items.reduce(
     (total, item) => total + (item.quantity ?? 1),
     0,
@@ -65,15 +65,27 @@ function ItemList({ items, boxes, rooms, onDeleteItem }) {
                 )}
               </div>
 
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={`${item.name} eşyasını sil`}
-                onClick={() => onDeleteItem(item.id)}
-              >
-                <Trash2 className="size-4" />
-              </Button>
+              <div className="flex shrink-0 gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={`${item.name} eşyasını düzenle`}
+                  onClick={() => onEditItem(item)}
+                >
+                  <Pencil className="size-4" />
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={`${item.name} eşyasını sil`}
+                  onClick={() => onDeleteItem(item.id)}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </div>
             </li>
           );
         })}

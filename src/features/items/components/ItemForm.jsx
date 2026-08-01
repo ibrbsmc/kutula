@@ -8,15 +8,17 @@ function ItemForm({
   setSelectedBoxId,
   itemName,
   setItemName,
-  error,
-  setError,
-  onSubmit,
+  quantity,
+  setQuantity,
   isFragile,
   setIsFragile,
   isValuable,
   setIsValuable,
-  quantity,
-  setQuantity,
+  error,
+  setError,
+  isEditing,
+  onCancelEdit,
+  onSubmit,
 }) {
   return (
     <form className="max-w-md space-y-4" onSubmit={onSubmit} noValidate>
@@ -111,9 +113,17 @@ function ItemForm({
         </label>
       </div>
 
-      <Button type="submit" disabled={boxes.length === 0}>
-        Eşya Ekle
-      </Button>
+      <div className="flex gap-2">
+        <Button type="submit" disabled={boxes.length === 0}>
+          {isEditing ? "Değişiklikleri Kaydet" : "Eşya Ekle"}
+        </Button>
+
+        {isEditing && (
+          <Button type="button" variant="outline" onClick={onCancelEdit}>
+            İptal
+          </Button>
+        )}
+      </div>
     </form>
   );
 }

@@ -25,6 +25,7 @@ function ItemsPage() {
   const [isFragile, setIsFragile] = useState(false);
   const [isValuable, setIsValuable] = useState(false);
   const [quantity, setQuantity] = useState("1");
+  const [editingItemId, setEditingItemId] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("kutula-items", JSON.stringify(items));
@@ -35,6 +36,7 @@ function ItemsPage() {
 
     const cleanedItemName = itemName.trim();
     const parsedQuantity = Number(quantity);
+    const isEditing = editingItemId !== null;
 
     if (!selectedBoxId) {
       setError("Lütfen bir kutu seç.");
@@ -51,16 +53,53 @@ function ItemsPage() {
       return;
     }
 
-    const existingItem = items.find(
+    const matchingItem = items.find(
       (item) =>
+        (!isEditing || item.id !== editingItemId) &&
         String(item.boxId) === String(selectedBoxId) &&
         item.name.trim().toLocaleLowerCase("tr-TR") ===
           cleanedItemName.toLocaleLowerCase("tr-TR"),
     );
 
-    if (existingItem) {
+    if (isEditing) {
+      if (matchingItem) {
+        const updatedItems = items
+          .filter((item) => item.id !== editingItemId)
+          .map((item) => {
+            if (item.id === matchingItem.id) {
+              return {
+                ...item,
+                quantity: (item.quantity ?? 1) + parsedQuantity,
+                isFragile: item.isFragile || isFragile,
+                isValuable: item.isValuable || isValuable,
+              };
+            }
+
+            return item;
+          });
+
+        setItems(updatedItems);
+      } else {
+        const updatedItems = items.map((item) => {
+          if (item.id === editingItemId) {
+            return {
+              ...item,
+              boxId: Number(selectedBoxId),
+              name: cleanedItemName,
+              quantity: parsedQuantity,
+              isFragile,
+              isValuable,
+            };
+          }
+
+          return item;
+        });
+
+        setItems(updatedItems);
+      }
+    } else if (matchingItem) {
       const updatedItems = items.map((item) => {
-        if (item.id === existingItem.id) {
+        if (item.id === matchingItem.id) {
           return {
             ...item,
             quantity: (item.quantity ?? 1) + parsedQuantity,
@@ -74,8 +113,14 @@ function ItemsPage() {
 
       setItems(updatedItems);
     } else {
+      const newItemId =
+        items.reduce(
+          (highestId, item) => Math.max(highestId, Number(item.id)),
+          0,
+        ) + 1;
+
       const newItem = {
-        id: Date.now(),
+        id: newItemId,
         boxId: Number(selectedBoxId),
         name: cleanedItemName,
         quantity: parsedQuantity,
@@ -86,8 +131,13 @@ function ItemsPage() {
       setItems([...items, newItem]);
     }
 
-    setItemName("");
+    resetForm();
+  }
+
+  function resetForm() {
+    setEditingItemId(null);
     setSelectedBoxId("");
+    setItemName("");
     setQuantity("1");
     setIsFragile(false);
     setIsValuable(false);
@@ -96,7 +146,26 @@ function ItemsPage() {
 
   function handleDeleteItem(itemId) {
     const updatedItems = items.filter((item) => item.id !== itemId);
+
     setItems(updatedItems);
+
+    if (itemId === editingItemId) {
+      resetForm();
+    }
+  }
+
+  function handleEditItem(item) {
+    setEditingItemId(item.id);
+    setSelectedBoxId(String(item.boxId));
+    setItemName(item.name);
+    setQuantity(String(item.quantity ?? 1));
+    setIsFragile(Boolean(item.isFragile));
+    setIsValuable(Boolean(item.isValuable));
+    setError("");
+  }
+
+  function handleCancelEdit() {
+    resetForm();
   }
 
   return (
@@ -109,26 +178,29 @@ function ItemsPage() {
         </p>
       </div>
       <ItemForm
-        itemName={itemName}
-        setItemName={setItemName}
-        boxes={boxes}
         rooms={rooms}
+        boxes={boxes}
         selectedBoxId={selectedBoxId}
         setSelectedBoxId={setSelectedBoxId}
-        error={error}
-        setError={setError}
-        onSubmit={handleSubmit}
+        itemName={itemName}
+        setItemName={setItemName}
+        quantity={quantity}
+        setQuantity={setQuantity}
         isFragile={isFragile}
         setIsFragile={setIsFragile}
         isValuable={isValuable}
         setIsValuable={setIsValuable}
-        quantity={quantity}
-        setQuantity={setQuantity}
+        error={error}
+        setError={setError}
+        isEditing={editingItemId !== null}
+        onCancelEdit={handleCancelEdit}
+        onSubmit={handleSubmit}
       />
       <ItemList
         items={items}
         boxes={boxes}
         rooms={rooms}
+        onEditItem={handleEditItem}
         onDeleteItem={handleDeleteItem}
       />
     </section>
