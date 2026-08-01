@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import ItemForm from "./components/ItemForm";
 import ItemList from "./components/ItemList";
+import ItemSearch from "./components/ItemSearch";
 
 function ItemsPage() {
   const [rooms] = useState(() => {
@@ -26,6 +27,7 @@ function ItemsPage() {
   const [isValuable, setIsValuable] = useState(false);
   const [quantity, setQuantity] = useState("1");
   const [editingItemId, setEditingItemId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     localStorage.setItem("kutula-items", JSON.stringify(items));
@@ -168,6 +170,12 @@ function ItemsPage() {
     resetForm();
   }
 
+  const cleanedSearchTerm = searchTerm.trim().toLocaleLowerCase("tr-TR");
+
+  const filteredItems = items.filter((item) =>
+    item.name.trim().toLocaleLowerCase("tr-TR").includes(cleanedSearchTerm),
+  );
+
   return (
     <section className="space-y-6">
       <div>
@@ -196,12 +204,19 @@ function ItemsPage() {
         onCancelEdit={handleCancelEdit}
         onSubmit={handleSubmit}
       />
+      <ItemSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
       <ItemList
-        items={items}
+        items={filteredItems}
         boxes={boxes}
         rooms={rooms}
         onEditItem={handleEditItem}
         onDeleteItem={handleDeleteItem}
+        emptyMessage={
+          cleanedSearchTerm
+            ? "Aramana uygun eşya bulunamadı."
+            : "Henüz kayıtlı eşya bulunmuyor."
+        }
       />
     </section>
   );

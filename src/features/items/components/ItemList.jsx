@@ -1,17 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 
-function ItemList({ items, boxes, rooms, onEditItem, onDeleteItem }) {
+function ItemList({
+  items,
+  boxes,
+  rooms,
+  onEditItem,
+  onDeleteItem,
+  emptyMessage,
+}) {
   const totalItemCount = items.reduce(
     (total, item) => total + (item.quantity ?? 1),
     0,
   );
   if (items.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        Henüz kayıtlı eşya bulunmuyor.
-      </p>
-    );
+    return <p className="text-sm text-muted-foreground">{emptyMessage}</p>;
   }
 
   return (
