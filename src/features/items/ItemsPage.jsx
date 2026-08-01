@@ -22,6 +22,8 @@ function ItemsPage() {
   const [itemName, setItemName] = useState("");
   const [selectedBoxId, setSelectedBoxId] = useState("");
   const [error, setError] = useState("");
+  const [isFragile, setIsFragile] = useState(false);
+  const [isValuable, setIsValuable] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("kutula-items", JSON.stringify(items));
@@ -42,12 +44,14 @@ function ItemsPage() {
       id: Date.now(),
       boxId: Number(selectedBoxId),
       name: cleanedItemName,
-      isFragile: false, // Eşya kırılabilir mi?
-      isValuable: false, // Eşya değerli mi?
+      isFragile, // Eşya kırılabilir mi?
+      isValuable, // Eşya değerli mi?
     };
     setItems([...items, newItem]);
     setItemName("");
     setSelectedBoxId("");
+    setIsFragile(false);
+    setIsValuable(false);
     setError("");
   }
 
@@ -70,6 +74,10 @@ function ItemsPage() {
         error={error}
         setError={setError}
         onSubmit={handleSubmit}
+        isFragile={isFragile}
+        setIsFragile={setIsFragile}
+        isValuable={isValuable}
+        setIsValuable={setIsValuable}
       />
       <ItemList items={items} boxes={boxes} rooms={rooms} />
     </section>

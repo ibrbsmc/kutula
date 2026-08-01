@@ -11,6 +11,10 @@ function ItemForm({
   error,
   setError,
   onSubmit,
+  isFragile,
+  setIsFragile,
+  isValuable,
+  setIsValuable,
 }) {
   return (
     <form className="max-w-md space-y-4" onSubmit={onSubmit} noValidate>
@@ -64,6 +68,28 @@ function ItemForm({
         />
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
+
+      <div className="space-y-3">
+        <label className="flex items-center gap-2 text-sm">
+          <Input
+            type="checkbox"
+            checked={isFragile}
+            onChange={(e) => setIsFragile(e.target.checked)}
+            className="size-4"
+          />
+          Kırılabilir
+        </label>
+
+        <label className="flex items-center gap-2 text-sm">
+          <Input
+            type="checkbox"
+            checked={isValuable}
+            onChange={(e) => setIsValuable(e.target.checked)}
+            className="size-4"
+          />
+          Değerli
+        </label>
+      </div>
 
       <Button type="submit" disabled={boxes.length === 0}>
         Eşya Ekle

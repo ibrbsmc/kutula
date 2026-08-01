@@ -31,6 +31,21 @@ function ItemList({ items, boxes, rooms }) {
                 {room?.name ?? "Oda bulunamadı"} -{" "}
                 {box ? `Kutu ${box.number}` : "Kutu bulunamadı"}
               </p>
+              {(item.isFragile || item.isValuable) && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {item.isFragile && (
+                    <span className="rounded-full bg-orange-100 px-2 py-1 text-xs text-orange-700">
+                      Kırılabilir
+                    </span>
+                  )}
+
+                  {item.isValuable && (
+                    <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs text-yellow-700">
+                      Değerli
+                    </span>
+                  )}
+                </div>
+              )}
             </li>
           );
         })}
