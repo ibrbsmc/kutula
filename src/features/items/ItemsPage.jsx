@@ -32,34 +32,65 @@ function ItemsPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
+
     const cleanedItemName = itemName.trim();
-    if (!selectedBoxId) {
-      setError("Lütfen bir kutu seçin.");
-      return;
-    }
-    if (!cleanedItemName) {
-      setError("Lütfen bir eşya adı girin.");
-      return;
-    }
     const parsedQuantity = Number(quantity);
-    if (!Number.isInteger(parsedQuantity) || parsedQuantity < 1) {
-      setError("Eşya en az bir adet ve tam sayı olmalıdır.");
+
+    if (!selectedBoxId) {
+      setError("Lütfen bir kutu seç.");
       return;
     }
-    const newItem = {
-      id: Date.now(),
-      boxId: Number(selectedBoxId),
-      name: cleanedItemName,
-      isFragile, // Eşya kırılabilir mi?
-      isValuable, // Eşya değerli mi?
-      quantity: parsedQuantity,
-    };
-    setItems([...items, newItem]);
+
+    if (!cleanedItemName) {
+      setError("Eşya adı boş bırakılamaz.");
+      return;
+    }
+
+    if (!Number.isInteger(parsedQuantity) || parsedQuantity < 1) {
+      setError("Eşya adedi en az 1 olan tam sayı olmalıdır.");
+      return;
+    }
+
+    const existingItem = items.find(
+      (item) =>
+        String(item.boxId) === String(selectedBoxId) &&
+        item.name.trim().toLocaleLowerCase("tr-TR") ===
+          cleanedItemName.toLocaleLowerCase("tr-TR"),
+    );
+
+    if (existingItem) {
+      const updatedItems = items.map((item) => {
+        if (item.id === existingItem.id) {
+          return {
+            ...item,
+            quantity: (item.quantity ?? 1) + parsedQuantity,
+            isFragile: item.isFragile || isFragile,
+            isValuable: item.isValuable || isValuable,
+          };
+        }
+
+        return item;
+      });
+
+      setItems(updatedItems);
+    } else {
+      const newItem = {
+        id: Date.now(),
+        boxId: Number(selectedBoxId),
+        name: cleanedItemName,
+        quantity: parsedQuantity,
+        isFragile,
+        isValuable,
+      };
+
+      setItems([...items, newItem]);
+    }
+
     setItemName("");
     setSelectedBoxId("");
+    setQuantity("1");
     setIsFragile(false);
     setIsValuable(false);
-    setQuantity("1");
     setError("");
   }
 
