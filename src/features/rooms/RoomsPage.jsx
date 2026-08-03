@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import RoomForm from "./components/RoomForm";
 import RoomList from "./components/RoomList";
 
@@ -11,6 +12,7 @@ function RoomsPage() {
   const [roomName, setRoomName] = useState("");
   const [editingRoomId, setEditingRoomId] = useState(null);
   const [error, setError] = useState("");
+  const [roomToDelete, setRoomToDelete] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("kutula-rooms", JSON.stringify(rooms));
@@ -33,7 +35,7 @@ function RoomsPage() {
 
       return (
         normalizedExistingName === normalizedRoomName &&
-        room.id !== editingRoomId
+        String(room.id) !== String(editingRoomId)
       );
     });
 
@@ -44,7 +46,7 @@ function RoomsPage() {
 
     if (editingRoomId !== null) {
       const updatedRooms = rooms.map((room) =>
-        room.id === editingRoomId
+        String(room.id) === String(editingRoomId)
           ? {
               ...room,
               name: cleanedRoomName,
@@ -84,19 +86,33 @@ function RoomsPage() {
       relatedBoxIds.includes(String(item.boxId)),
     );
 
-    const confirmationMessage =
-      relatedBoxes.length > 0
-        ? `Bu odada ${relatedBoxes.length} kutu ve ${relatedItems.length} eşya kaydı var. Oda, kutular ve eşyalar silinsin mi?`
-        : "Bu oda silinsin mi?";
+    const room = rooms.find((room) => String(room.id) === String(roomId));
 
-    const isConfirmed = window.confirm(confirmationMessage);
+    setRoomToDelete({
+      id: roomId,
+      name: room?.name ?? "",
+      boxCount: relatedBoxes.length,
+      itemCount: relatedItems.length,
+    });
+  }
 
-    if (!isConfirmed) {
+  function handleConfirmDelete() {
+    if (!roomToDelete) {
       return;
     }
 
+    const savedBoxes = localStorage.getItem("kutula-boxes");
+    const savedItems = localStorage.getItem("kutula-items");
+
+    const boxes = savedBoxes ? JSON.parse(savedBoxes) : [];
+    const items = savedItems ? JSON.parse(savedItems) : [];
+
+    const relatedBoxIds = boxes
+      .filter((box) => String(box.roomId) === String(roomToDelete.id))
+      .map((box) => String(box.id));
+
     const remainingBoxes = boxes.filter(
-      (box) => String(box.roomId) !== String(roomId),
+      (box) => String(box.roomId) !== String(roomToDelete.id),
     );
 
     const remainingItems = items.filter(
@@ -108,12 +124,16 @@ function RoomsPage() {
     localStorage.setItem("kutula-items", JSON.stringify(remainingItems));
 
     setRooms((currentRooms) =>
-      currentRooms.filter((room) => String(room.id) !== String(roomId)),
+      currentRooms.filter(
+        (room) => String(room.id) !== String(roomToDelete.id),
+      ),
     );
 
-    if (String(editingRoomId) === String(roomId)) {
+    if (String(editingRoomId) === String(roomToDelete.id)) {
       handleCancelEdit();
     }
+
+    setRoomToDelete(null);
   }
 
   function handleEdit(room) {
@@ -149,6 +169,22 @@ function RoomsPage() {
       />
 
       <RoomList rooms={rooms} onEdit={handleEdit} onDelete={handleDelete} />
+
+      <DeleteConfirmDialog
+        open={roomToDelete !== null}
+        title="Oda silinsin mi?"
+        description={
+          roomToDelete?.boxCount > 0
+            ? `"${roomToDelete.name}" odasındaki ${roomToDelete.boxCount} kutu ve ${roomToDelete.itemCount} eşya da silinecek. Bu işlem geri alınamaz.`
+            : `"${roomToDelete?.name}" odası silinecek. Bu işlem geri alınamaz.`
+        }
+        onOpenChange={(open) => {
+          if (!open) {
+            setRoomToDelete(null);
+          }
+        }}
+        onConfirm={handleConfirmDelete}
+      />
     </section>
   );
 }
