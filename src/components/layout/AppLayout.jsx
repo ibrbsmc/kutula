@@ -4,12 +4,13 @@ import MobileNav from "./MobileNav";
 
 function AppLayout() {
   return (
-    <div className="min-h-screen md:flex">
+    <div className="min-h-dvh md:flex">
       <Sidebar />
 
-      <div className="min-w-0 flex-1">
+      <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
         <MobileNav />
-        <main className="flex-1 p-6">
+
+        <main className="flex-1 bg-[#FCF5ED] p-6">
           <Outlet />
         </main>
       </div>

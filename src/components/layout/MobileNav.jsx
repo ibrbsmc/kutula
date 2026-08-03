@@ -15,7 +15,7 @@ function MobileNav() {
           <span className="text-xl font-bold text-[#BF5223]">Kutula</span>
         </div>
 
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-2">
           <NavLink to="/" end className={linkClass}>
             <House size={22} />
             <span className="sr-only">Ana Sayfa</span>
