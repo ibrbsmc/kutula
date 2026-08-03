@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import ItemForm from "./components/ItemForm";
 import ItemList from "./components/ItemList";
 import ItemSearch from "./components/ItemSearch";
+import ItemFilters from "./components/ItemFilters";
 
 function ItemsPage() {
   const [rooms] = useState(() => {
@@ -28,6 +29,8 @@ function ItemsPage() {
   const [quantity, setQuantity] = useState("1");
   const [editingItemId, setEditingItemId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [roomFilter, setRoomFilter] = useState("Tümü");
+  const [boxFilter, setBoxFilter] = useState("Tümü");
 
   useEffect(() => {
     localStorage.setItem("kutula-items", JSON.stringify(items));
@@ -172,9 +175,32 @@ function ItemsPage() {
 
   const cleanedSearchTerm = searchTerm.trim().toLocaleLowerCase("tr-TR");
 
-  const filteredItems = items.filter((item) =>
-    item.name.trim().toLocaleLowerCase("tr-TR").includes(cleanedSearchTerm),
-  );
+  const filteredItems = items.filter((item) => {
+    const matchesSearch = item.name
+      .trim()
+      .toLocaleLowerCase("tr-TR")
+      .includes(cleanedSearchTerm);
+
+    const itemBox = boxes.find((box) => String(box.id) === String(item.boxId));
+
+    const matchesRoom =
+      roomFilter === "Tümü" || String(itemBox?.roomId) === String(roomFilter);
+
+    const matchesBox =
+      boxFilter === "Tümü" || String(item.boxId) === String(boxFilter);
+
+    return matchesSearch && matchesRoom && matchesBox;
+  });
+
+  function handleRoomFilterChange(roomId) {
+    setRoomFilter(roomId);
+    setBoxFilter("Tümü");
+  }
+
+  const availableFilterBoxes =
+    roomFilter === "Tümü"
+      ? boxes
+      : boxes.filter((box) => String(box.roomId) === String(roomFilter));
 
   return (
     <section className="space-y-6">
@@ -206,6 +232,15 @@ function ItemsPage() {
       />
       <ItemSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
+      <ItemFilters
+        rooms={rooms}
+        boxes={availableFilterBoxes}
+        roomFilter={roomFilter}
+        boxFilter={boxFilter}
+        onRoomFilterChange={handleRoomFilterChange}
+        setBoxFilter={setBoxFilter}
+      />
+
       <ItemList
         items={filteredItems}
         boxes={boxes}
@@ -213,8 +248,8 @@ function ItemsPage() {
         onEditItem={handleEditItem}
         onDeleteItem={handleDeleteItem}
         emptyMessage={
-          cleanedSearchTerm
-            ? "Aramana uygun eşya bulunamadı."
+          cleanedSearchTerm || roomFilter !== "Tümü" || boxFilter !== "Tümü"
+            ? "Seçtiğin ölçütlere uygun eşya bulunamadı."
             : "Henüz kayıtlı eşya bulunmuyor."
         }
       />
