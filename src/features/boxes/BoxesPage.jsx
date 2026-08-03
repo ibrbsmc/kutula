@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import BoxFilters from "./components/BoxFilters";
 import BoxForm from "./components/BoxForm";
 import BoxList from "./components/BoxList";
@@ -22,6 +24,7 @@ function BoxesPage() {
   const [boxStatus, setBoxStatus] = useState("Hazırlanıyor");
   const [statusFilter, setStatusFilter] = useState("Tümü");
   const [roomFilter, setRoomFilter] = useState("Tümü");
+  const [boxToDelete, setBoxToDelete] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("kutula-boxes", JSON.stringify(boxes));
@@ -58,6 +61,7 @@ function BoxesPage() {
 
       setBoxes(updatedBoxes);
       setEditingBoxId(null);
+      toast.success("Kutu güncellendi.");
     } else {
       const newBox = {
         id: Date.now(),
@@ -67,6 +71,7 @@ function BoxesPage() {
       };
 
       setBoxes([...boxes, newBox]);
+      toast.success("Kutu eklendi.");
     }
 
     setSelectedRoomId("");
@@ -79,30 +84,44 @@ function BoxesPage() {
     const savedItems = localStorage.getItem("kutula-items");
     const items = savedItems ? JSON.parse(savedItems) : [];
 
-    const relatedItems = items.filter(
+    const box = boxes.find((box) => String(box.id) === String(boxId));
+    const itemCount = items.filter(
       (item) => String(item.boxId) === String(boxId),
-    );
+    ).length;
 
-    const confirmationMessage =
-      relatedItems.length > 0
-        ? `Bu kutuda ${relatedItems.length} eşya kaydı var. Kutu ve içindeki eşyalar silinsin mi?`
-        : "Bu kutu silinsin mi?";
+    setBoxToDelete({
+      id: boxId,
+      number: box?.number ?? "",
+      itemCount,
+    });
+  }
 
-    const isConfirmed = window.confirm(confirmationMessage);
-
-    if (!isConfirmed) {
+  function handleConfirmDelete() {
+    if (!boxToDelete) {
       return;
     }
 
+    const savedItems = localStorage.getItem("kutula-items");
+    const items = savedItems ? JSON.parse(savedItems) : [];
+
     const remainingItems = items.filter(
-      (item) => String(item.boxId) !== String(boxId),
+      (item) => String(item.boxId) !== String(boxToDelete.id),
     );
 
     localStorage.setItem("kutula-items", JSON.stringify(remainingItems));
 
     setBoxes((currentBoxes) =>
-      currentBoxes.filter((box) => String(box.id) !== String(boxId)),
+      currentBoxes.filter(
+        (box) => String(box.id) !== String(boxToDelete.id),
+      ),
     );
+
+    if (String(editingBoxId) === String(boxToDelete.id)) {
+      handleCancelEdit();
+    }
+
+    toast.success("Kutu silindi.");
+    setBoxToDelete(null);
   }
 
   const handleEdit = (boxId) => {
@@ -179,6 +198,24 @@ function BoxesPage() {
           onDelete={handleDelete}
         />
       </div>
+
+      <DeleteConfirmDialog
+        open={boxToDelete !== null}
+        title="Kutu silinsin mi?"
+        description={
+          boxToDelete
+            ? boxToDelete.itemCount > 0
+              ? `${boxToDelete.number} numaralı kutu ve içindeki ${boxToDelete.itemCount} eşya silinecek. Bu işlem geri alınamaz.`
+              : `${boxToDelete.number} numaralı kutu silinecek. Bu işlem geri alınamaz.`
+            : ""
+        }
+        onOpenChange={(open) => {
+          if (!open) {
+            setBoxToDelete(null);
+          }
+        }}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

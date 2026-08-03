@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import ItemForm from "./components/ItemForm";
 import ItemList from "./components/ItemList";
 import ItemSearch from "./components/ItemSearch";
@@ -33,6 +35,7 @@ function ItemsPage() {
   const [boxFilter, setBoxFilter] = useState("Tümü");
   const [fragileFilter, setFragileFilter] = useState("Tümü");
   const [valuableFilter, setValuableFilter] = useState("Tümü");
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("kutula-items", JSON.stringify(items));
@@ -86,6 +89,7 @@ function ItemsPage() {
           });
 
         setItems(updatedItems);
+        toast.success("Eşya birleştirilerek güncellendi.");
       } else {
         const updatedItems = items.map((item) => {
           if (item.id === editingItemId) {
@@ -103,6 +107,7 @@ function ItemsPage() {
         });
 
         setItems(updatedItems);
+        toast.success("Eşya güncellendi.");
       }
     } else if (matchingItem) {
       const updatedItems = items.map((item) => {
@@ -119,6 +124,7 @@ function ItemsPage() {
       });
 
       setItems(updatedItems);
+      toast.success("Eşya adedi güncellendi.");
     } else {
       const newItemId =
         items.reduce(
@@ -136,6 +142,7 @@ function ItemsPage() {
       };
 
       setItems([...items, newItem]);
+      toast.success("Eşya eklendi.");
     }
 
     resetForm();
@@ -152,13 +159,31 @@ function ItemsPage() {
   }
 
   function handleDeleteItem(itemId) {
-    const updatedItems = items.filter((item) => item.id !== itemId);
+    const item = items.find((item) => String(item.id) === String(itemId));
 
-    setItems(updatedItems);
+    setItemToDelete({
+      id: itemId,
+      name: item?.name ?? "",
+    });
+  }
 
-    if (itemId === editingItemId) {
+  function handleConfirmDelete() {
+    if (!itemToDelete) {
+      return;
+    }
+
+    setItems((currentItems) =>
+      currentItems.filter(
+        (item) => String(item.id) !== String(itemToDelete.id),
+      ),
+    );
+
+    if (String(itemToDelete.id) === String(editingItemId)) {
       resetForm();
     }
+
+    toast.success("Eşya silindi.");
+    setItemToDelete(null);
   }
 
   function handleEditItem(item) {
@@ -291,6 +316,22 @@ function ItemsPage() {
             ? "Seçtiğin ölçütlere uygun eşya bulunamadı."
             : "Henüz kayıtlı eşya bulunmuyor."
         }
+      />
+
+      <DeleteConfirmDialog
+        open={itemToDelete !== null}
+        title="Eşya silinsin mi?"
+        description={
+          itemToDelete
+            ? `"${itemToDelete.name}" eşyası silinecek. Bu işlem geri alınamaz.`
+            : ""
+        }
+        onOpenChange={(open) => {
+          if (!open) {
+            setItemToDelete(null);
+          }
+        }}
+        onConfirm={handleConfirmDelete}
       />
     </section>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import RoomForm from "./components/RoomForm";
 import RoomList from "./components/RoomList";
@@ -56,6 +57,7 @@ function RoomsPage() {
 
       setRooms(updatedRooms);
       setEditingRoomId(null);
+      toast.success("Oda güncellendi.");
     } else {
       const newRoom = {
         id: Date.now(),
@@ -63,6 +65,7 @@ function RoomsPage() {
       };
 
       setRooms([...rooms, newRoom]);
+      toast.success("Oda eklendi.");
     }
 
     setRoomName("");
@@ -133,6 +136,7 @@ function RoomsPage() {
       handleCancelEdit();
     }
 
+    toast.success("Oda silindi.");
     setRoomToDelete(null);
   }
 
@@ -174,9 +178,11 @@ function RoomsPage() {
         open={roomToDelete !== null}
         title="Oda silinsin mi?"
         description={
-          roomToDelete?.boxCount > 0
-            ? `"${roomToDelete.name}" odasındaki ${roomToDelete.boxCount} kutu ve ${roomToDelete.itemCount} eşya da silinecek. Bu işlem geri alınamaz.`
-            : `"${roomToDelete?.name}" odası silinecek. Bu işlem geri alınamaz.`
+          roomToDelete
+            ? roomToDelete.boxCount > 0
+              ? `"${roomToDelete.name}" odasındaki ${roomToDelete.boxCount} kutu ve ${roomToDelete.itemCount} eşya da silinecek. Bu işlem geri alınamaz.`
+              : `"${roomToDelete.name}" odası silinecek. Bu işlem geri alınamaz.`
+            : ""
         }
         onOpenChange={(open) => {
           if (!open) {
