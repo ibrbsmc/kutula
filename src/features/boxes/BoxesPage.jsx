@@ -75,10 +75,35 @@ function BoxesPage() {
     setError("");
   };
 
-  const handleDelete = (boxId) => {
-    const updatedBoxes = boxes.filter((box) => box.id !== boxId);
-    setBoxes(updatedBoxes);
-  };
+  function handleDelete(boxId) {
+    const savedItems = localStorage.getItem("kutula-items");
+    const items = savedItems ? JSON.parse(savedItems) : [];
+
+    const relatedItems = items.filter(
+      (item) => String(item.boxId) === String(boxId),
+    );
+
+    const confirmationMessage =
+      relatedItems.length > 0
+        ? `Bu kutuda ${relatedItems.length} eşya kaydı var. Kutu ve içindeki eşyalar silinsin mi?`
+        : "Bu kutu silinsin mi?";
+
+    const isConfirmed = window.confirm(confirmationMessage);
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    const remainingItems = items.filter(
+      (item) => String(item.boxId) !== String(boxId),
+    );
+
+    localStorage.setItem("kutula-items", JSON.stringify(remainingItems));
+
+    setBoxes((currentBoxes) =>
+      currentBoxes.filter((box) => String(box.id) !== String(boxId)),
+    );
+  }
 
   const handleEdit = (boxId) => {
     const boxToEdit = boxes.find((box) => box.id === boxId);
