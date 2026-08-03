@@ -1,9 +1,13 @@
+import { Button } from "@/components/ui/button";
+
 function BoxFilters({
   rooms,
   statusFilter,
   setStatusFilter,
   roomFilter,
   setRoomFilter,
+  onClearFilters,
+  hasActiveFilters,
 }) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row">
@@ -45,6 +49,17 @@ function BoxFilters({
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="flex items-end">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onClearFilters}
+          disabled={!hasActiveFilters}
+        >
+          Filtreleri Temizle
+        </Button>
       </div>
     </div>
   );

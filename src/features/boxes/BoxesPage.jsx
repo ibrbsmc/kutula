@@ -152,6 +152,14 @@ function BoxesPage() {
     return matchesStatus && matchesRoom;
   });
 
+  const hasActiveFilters =
+    statusFilter !== "Tümü" || roomFilter !== "Tümü";
+
+  function handleClearFilters() {
+    setStatusFilter("Tümü");
+    setRoomFilter("Tümü");
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -188,6 +196,8 @@ function BoxesPage() {
           setStatusFilter={setStatusFilter}
           roomFilter={roomFilter}
           setRoomFilter={setRoomFilter}
+          onClearFilters={handleClearFilters}
+          hasActiveFilters={hasActiveFilters}
         />
 
         <BoxList
