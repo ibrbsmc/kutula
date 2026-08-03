@@ -31,6 +31,8 @@ function ItemsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [roomFilter, setRoomFilter] = useState("Tümü");
   const [boxFilter, setBoxFilter] = useState("Tümü");
+  const [fragileFilter, setFragileFilter] = useState("Tümü");
+  const [valuableFilter, setValuableFilter] = useState("Tümü");
 
   useEffect(() => {
     localStorage.setItem("kutula-items", JSON.stringify(items));
@@ -189,7 +191,23 @@ function ItemsPage() {
     const matchesBox =
       boxFilter === "Tümü" || String(item.boxId) === String(boxFilter);
 
-    return matchesSearch && matchesRoom && matchesBox;
+    const matchesFragile =
+      fragileFilter === "Tümü" ||
+      (fragileFilter === "Evet" && item.isFragile) ||
+      (fragileFilter === "Hayır" && !item.isFragile);
+
+    const matchesValuable =
+      valuableFilter === "Tümü" ||
+      (valuableFilter === "Evet" && item.isValuable) ||
+      (valuableFilter === "Hayır" && !item.isValuable);
+
+    return (
+      matchesSearch &&
+      matchesRoom &&
+      matchesBox &&
+      matchesFragile &&
+      matchesValuable
+    );
   });
 
   function handleRoomFilterChange(roomId) {
@@ -237,8 +255,12 @@ function ItemsPage() {
         boxes={availableFilterBoxes}
         roomFilter={roomFilter}
         boxFilter={boxFilter}
+        fragileFilter={fragileFilter}
+        valuableFilter={valuableFilter}
         onRoomFilterChange={handleRoomFilterChange}
         setBoxFilter={setBoxFilter}
+        setFragileFilter={setFragileFilter}
+        setValuableFilter={setValuableFilter}
       />
 
       <ItemList
@@ -248,7 +270,11 @@ function ItemsPage() {
         onEditItem={handleEditItem}
         onDeleteItem={handleDeleteItem}
         emptyMessage={
-          cleanedSearchTerm || roomFilter !== "Tümü" || boxFilter !== "Tümü"
+          cleanedSearchTerm ||
+          roomFilter !== "Tümü" ||
+          boxFilter !== "Tümü" ||
+          fragileFilter !== "Tümü" ||
+          valuableFilter !== "Tümü"
             ? "Seçtiğin ölçütlere uygun eşya bulunamadı."
             : "Henüz kayıtlı eşya bulunmuyor."
         }

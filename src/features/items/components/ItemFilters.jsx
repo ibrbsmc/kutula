@@ -3,8 +3,12 @@ function ItemFilters({
   boxes,
   roomFilter,
   boxFilter,
+  fragileFilter,
+  valuableFilter,
   onRoomFilterChange,
   setBoxFilter,
+  setFragileFilter,
+  setValuableFilter,
 }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
@@ -55,6 +59,39 @@ function ItemFilters({
               </option>
             );
           })}
+        </select>
+      </div>
+      <div className="space-y-2">
+        <label htmlFor="fragile-filter" className="text-sm font-medium">
+          Kırılabilir
+        </label>
+
+        <select
+          id="fragile-filter"
+          value={fragileFilter}
+          onChange={(e) => setFragileFilter(e.target.value)}
+          className="h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+        >
+          <option value="Tümü">Tümü</option>
+          <option value="Evet">Evet</option>
+          <option value="Hayır">Hayır</option>
+        </select>
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="valuable-filter" className="text-sm font-medium">
+          Değerli
+        </label>
+
+        <select
+          id="valuable-filter"
+          value={valuableFilter}
+          onChange={(e) => setValuableFilter(e.target.value)}
+          className="h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+        >
+          <option value="Tümü">Tümü</option>
+          <option value="Evet">Evet</option>
+          <option value="Hayır">Hayır</option>
         </select>
       </div>
     </div>
