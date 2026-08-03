@@ -11,7 +11,6 @@ function RoomsPage() {
   const [roomName, setRoomName] = useState("");
   const [editingRoomId, setEditingRoomId] = useState(null);
   const [error, setError] = useState("");
-  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     localStorage.setItem("kutula-rooms", JSON.stringify(rooms));
@@ -70,19 +69,51 @@ function RoomsPage() {
 
   function handleDelete(roomId) {
     const savedBoxes = localStorage.getItem("kutula-boxes");
+    const savedItems = localStorage.getItem("kutula-items");
+
     const boxes = savedBoxes ? JSON.parse(savedBoxes) : [];
+    const items = savedItems ? JSON.parse(savedItems) : [];
 
-    const roomHasBoxes = boxes.some((box) => box.roomId === roomId);
+    const relatedBoxes = boxes.filter(
+      (box) => String(box.roomId) === String(roomId),
+    );
 
-    if (roomHasBoxes) {
-      setDeleteError("Bu odada kayıtlı kutular olduğu için oda silinemez.");
+    const relatedBoxIds = relatedBoxes.map((box) => String(box.id));
+
+    const relatedItems = items.filter((item) =>
+      relatedBoxIds.includes(String(item.boxId)),
+    );
+
+    const confirmationMessage =
+      relatedBoxes.length > 0
+        ? `Bu odada ${relatedBoxes.length} kutu ve ${relatedItems.length} eşya kaydı var. Oda, kutular ve eşyalar silinsin mi?`
+        : "Bu oda silinsin mi?";
+
+    const isConfirmed = window.confirm(confirmationMessage);
+
+    if (!isConfirmed) {
       return;
     }
 
-    const updatedRooms = rooms.filter((room) => room.id !== roomId);
+    const remainingBoxes = boxes.filter(
+      (box) => String(box.roomId) !== String(roomId),
+    );
 
-    setRooms(updatedRooms);
-    setDeleteError("");
+    const remainingItems = items.filter(
+      (item) => !relatedBoxIds.includes(String(item.boxId)),
+    );
+
+    localStorage.setItem("kutula-boxes", JSON.stringify(remainingBoxes));
+
+    localStorage.setItem("kutula-items", JSON.stringify(remainingItems));
+
+    setRooms((currentRooms) =>
+      currentRooms.filter((room) => String(room.id) !== String(roomId)),
+    );
+
+    if (String(editingRoomId) === String(roomId)) {
+      handleCancelEdit();
+    }
   }
 
   function handleEdit(room) {
@@ -106,6 +137,7 @@ function RoomsPage() {
           Taşınma kutularını yerleştirebileceğin odaları oluştur.
         </p>
       </div>
+
       <RoomForm
         roomName={roomName}
         setRoomName={setRoomName}
@@ -115,12 +147,8 @@ function RoomsPage() {
         onSubmit={handleSubmit}
         onCancelEdit={handleCancelEdit}
       />
-      {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
-      <RoomList
-        rooms={rooms}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />{" "}
+
+      <RoomList rooms={rooms} onEdit={handleEdit} onDelete={handleDelete} />
     </section>
   );
 }
