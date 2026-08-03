@@ -3,14 +3,19 @@ import { NavLink } from "react-router";
 
 function MobileNav() {
   const linkClass = ({ isActive }) =>
-    isActive ? "font-semibold text-primary" : "text-muted-foreground";
+    `flex items-center justify-center rounded-md p-2 ${
+      isActive ? "bg-[#E08149] text-white" : "text-[#E08149]"
+    }`;
 
   return (
-    <header className="border-b p-4 md:hidden">
+    <header className="border-b border-b-[#F6F4EE] p-4 md:hidden">
       <div className="flex items-center justify-between">
-        <span className="text-xl font-bold">Kutula</span>
+        <div className="flex items-center gap-2">
+          <img src="/favicon.png" alt="Kutula Logo" width={36} height={36} />
+          <span className="text-xl font-bold text-[#BF5223]">Kutula</span>
+        </div>
 
-        <nav className="flex gap-4">
+        <nav className="flex items-center gap-1">
           <NavLink to="/" end className={linkClass}>
             <House size={22} />
             <span className="sr-only">Ana Sayfa</span>
