@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 function ItemFilters({
   rooms,
   boxes,
@@ -9,6 +11,8 @@ function ItemFilters({
   setBoxFilter,
   setFragileFilter,
   setValuableFilter,
+  onClearFilters,
+  hasActiveFilters,
 }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
@@ -93,6 +97,16 @@ function ItemFilters({
           <option value="Evet">Evet</option>
           <option value="Hayır">Hayır</option>
         </select>
+      </div>
+      <div className="flex justify-end">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onClearFilters}
+          disabled={!hasActiveFilters}
+        >
+          Filtreleri Temizle
+        </Button>
       </div>
     </div>
   );

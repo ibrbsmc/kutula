@@ -177,6 +177,13 @@ function ItemsPage() {
 
   const cleanedSearchTerm = searchTerm.trim().toLocaleLowerCase("tr-TR");
 
+  const hasActiveFilters =
+    cleanedSearchTerm !== "" ||
+    roomFilter !== "Tümü" ||
+    boxFilter !== "Tümü" ||
+    fragileFilter !== "Tümü" ||
+    valuableFilter !== "Tümü";
+
   const filteredItems = items.filter((item) => {
     const matchesSearch = item.name
       .trim()
@@ -220,6 +227,14 @@ function ItemsPage() {
       ? boxes
       : boxes.filter((box) => String(box.roomId) === String(roomFilter));
 
+  function handleClearFilters() {
+    setSearchTerm("");
+    setRoomFilter("Tümü");
+    setBoxFilter("Tümü");
+    setFragileFilter("Tümü");
+    setValuableFilter("Tümü");
+  }
+
   return (
     <section className="space-y-6">
       <div>
@@ -261,6 +276,8 @@ function ItemsPage() {
         setBoxFilter={setBoxFilter}
         setFragileFilter={setFragileFilter}
         setValuableFilter={setValuableFilter}
+        onClearFilters={handleClearFilters}
+        hasActiveFilters={hasActiveFilters}
       />
 
       <ItemList
@@ -270,11 +287,7 @@ function ItemsPage() {
         onEditItem={handleEditItem}
         onDeleteItem={handleDeleteItem}
         emptyMessage={
-          cleanedSearchTerm ||
-          roomFilter !== "Tümü" ||
-          boxFilter !== "Tümü" ||
-          fragileFilter !== "Tümü" ||
-          valuableFilter !== "Tümü"
+          hasActiveFilters
             ? "Seçtiğin ölçütlere uygun eşya bulunamadı."
             : "Henüz kayıtlı eşya bulunmuyor."
         }
