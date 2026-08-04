@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import RoomForm from "./components/RoomForm";
 import RoomList from "./components/RoomList";
+import resizeRoomImage from "./resizeRoomImage";
 
 function RoomsPage() {
   const [rooms, setRooms] = useState(() => {
@@ -11,13 +12,63 @@ function RoomsPage() {
   });
 
   const [roomName, setRoomName] = useState("");
+  const [roomImage, setRoomImage] = useState("");
   const [editingRoomId, setEditingRoomId] = useState(null);
   const [error, setError] = useState("");
+  const [imageWarning, setImageWarning] = useState("");
+  const [isImageLoading, setIsImageLoading] = useState(false);
   const [roomToDelete, setRoomToDelete] = useState(null);
 
+  const [boxes] = useState(() => {
+    const savedBoxes = localStorage.getItem("kutula-boxes");
+    return savedBoxes ? JSON.parse(savedBoxes) : [];
+  });
+
+  const [items] = useState(() => {
+    const savedItems = localStorage.getItem("kutula-items");
+    return savedItems ? JSON.parse(savedItems) : [];
+  });
+
   useEffect(() => {
-    localStorage.setItem("kutula-rooms", JSON.stringify(rooms));
+    try {
+      localStorage.setItem("kutula-rooms", JSON.stringify(rooms));
+    } catch {
+      toast.error(
+        "Görsel kaydedilemedi. Daha küçük bir görsel deneyebilirsin.",
+      );
+    }
   }, [rooms]);
+
+  async function handleImageChange(file) {
+    if (!file) {
+      return;
+    }
+
+    setIsImageLoading(true);
+    setError("");
+    setImageWarning("");
+
+    try {
+      const { resizedImage, isLowResolution } = await resizeRoomImage(file);
+
+      setRoomImage(resizedImage);
+
+      if (isLowResolution) {
+        setImageWarning(
+          "Bu görsel düşük çözünürlüklü olduğu için kartta daha az net görünebilir.",
+        );
+      }
+    } catch (imageError) {
+      setError(imageError.message);
+    } finally {
+      setIsImageLoading(false);
+    }
+  }
+
+  function handleRemoveImage() {
+    setRoomImage("");
+    setImageWarning("");
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -51,6 +102,7 @@ function RoomsPage() {
           ? {
               ...room,
               name: cleanedRoomName,
+              image: roomImage,
             }
           : room,
       );
@@ -62,6 +114,7 @@ function RoomsPage() {
       const newRoom = {
         id: Date.now(),
         name: cleanedRoomName,
+        image: roomImage,
       };
 
       setRooms([...rooms, newRoom]);
@@ -69,6 +122,8 @@ function RoomsPage() {
     }
 
     setRoomName("");
+    setRoomImage("");
+    setImageWarning("");
     setError("");
   }
 
@@ -143,19 +198,45 @@ function RoomsPage() {
   function handleEdit(room) {
     setEditingRoomId(room.id);
     setRoomName(room.name);
+    setRoomImage(room.image ?? "");
+    setImageWarning("");
     setError("");
   }
 
   function handleCancelEdit() {
     setEditingRoomId(null);
     setRoomName("");
+    setRoomImage("");
+    setImageWarning("");
     setError("");
   }
+
+  const roomsWithStats = rooms.map((room) => {
+    const roomBoxes = boxes.filter(
+      (box) => String(box.roomId) === String(room.id),
+    );
+
+    const roomBoxIds = roomBoxes.map((box) => String(box.id));
+
+    const itemCount = items.reduce((total, item) => {
+      if (!roomBoxIds.includes(String(item.boxId))) {
+        return total;
+      }
+
+      return total + (Number(item.quantity) || 1);
+    }, 0);
+
+    return {
+      room,
+      boxCount: roomBoxes.length,
+      itemCount,
+    };
+  });
 
   return (
     <section className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Odalar</h1>
+        <h1 className="text-3xl font-bold text-[#3B2A22]">Odalar</h1>
 
         <p className="text-muted-foreground">
           Taşınma kutularını yerleştirebileceğin odaları oluştur.
@@ -165,14 +246,23 @@ function RoomsPage() {
       <RoomForm
         roomName={roomName}
         setRoomName={setRoomName}
+        roomImage={roomImage}
         editingRoomId={editingRoomId}
         error={error}
+        imageWarning={imageWarning}
+        isImageLoading={isImageLoading}
         setError={setError}
+        onImageChange={handleImageChange}
+        onRemoveImage={handleRemoveImage}
         onSubmit={handleSubmit}
         onCancelEdit={handleCancelEdit}
       />
 
-      <RoomList rooms={rooms} onEdit={handleEdit} onDelete={handleDelete} />
+      <RoomList
+        roomsWithStats={roomsWithStats}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       <DeleteConfirmDialog
         open={roomToDelete !== null}
