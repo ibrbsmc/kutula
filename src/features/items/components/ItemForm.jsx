@@ -63,98 +63,102 @@ function ItemForm({
       noValidate
       className="max-w-2xl space-y-4 rounded-2xl border bg-white p-4 shadow-sm sm:p-5"
     >
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div className="space-y-2">
-          <label htmlFor="item-box" className="text-sm font-medium">
-            Kutu
-          </label>
-
-          <select
-            id="item-box"
-            required
-            value={selectedBoxId}
-            onChange={(e) => {
-              setSelectedBoxId(e.target.value);
-              setError("");
-            }}
-            className={selectClassName}
-            disabled={boxes.length === 0}
-          >
-            <option value="">
-              {boxes.length === 0 ? "Önce bir kutu oluşturmalısın" : "Kutu seç"}
-            </option>
-
-            {boxes.map((box) => {
-              const room = rooms.find(
-                (room) => String(room.id) === String(box.roomId),
-              );
-
-              return (
-                <option key={box.id} value={box.id}>
-                  {room?.name ?? "Oda bulunamadı"} - Kutu {box.number}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="item-name" className="text-sm font-medium">
-            Eşya Adı
-          </label>
-
-          <Input
-            id="item-name"
-            placeholder="Örneğin: Bardak takımı"
-            value={itemName}
-            onChange={(e) => {
-              setItemName(e.target.value);
-              setError("");
-            }}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="item-quantity" className="text-sm font-medium">
-            Adet
-          </label>
-
-          <Input
-            id="item-quantity"
-            type="number"
-            min="1"
-            step="1"
-            value={quantity}
-            onChange={(e) => {
-              setQuantity(e.target.value);
-              setError("");
-            }}
-          />
-        </div>
-      </div>
-
       <div className="grid gap-4 sm:grid-cols-[1fr_180px]">
-        <div className="space-y-2">
-          <label htmlFor="item-image" className="text-sm font-medium">
-            Eşya Görseli{" "}
-            <span className="font-normal text-xs text-muted-foreground">
-              (Opsiyonel)
-            </span>
-          </label>
+        <div className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="space-y-2">
+              <label htmlFor="item-box" className="text-sm font-medium">
+                Kutu
+              </label>
 
-          <Input
-            id="item-image"
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            disabled={isImageLoading}
-            onChange={(e) => onImageChange(e.target.files[0])}
-            className="file:mr-3 file:cursor-pointer file:font-medium"
-          />
+              <select
+                id="item-box"
+                required
+                value={selectedBoxId}
+                onChange={(e) => {
+                  setSelectedBoxId(e.target.value);
+                  setError("");
+                }}
+                className={selectClassName}
+                disabled={boxes.length === 0}
+              >
+                <option value="">
+                  {boxes.length === 0
+                    ? "Önce bir kutu oluşturmalısın"
+                    : "Kutu seç"}
+                </option>
 
-          <p className="text-xs text-muted-foreground">
-            Maksimum dosya boyutu: 10 MB
-          </p>
+                {boxes.map((box) => {
+                  const room = rooms.find(
+                    (room) => String(room.id) === String(box.roomId),
+                  );
+
+                  return (
+                    <option key={box.id} value={box.id}>
+                      {room?.name ?? "Oda bulunamadı"} - Kutu {box.number}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="item-name" className="text-sm font-medium">
+                Eşya Adı
+              </label>
+
+              <Input
+                id="item-name"
+                placeholder="Örneğin: Bardak"
+                value={itemName}
+                onChange={(e) => {
+                  setItemName(e.target.value);
+                  setError("");
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="item-quantity" className="text-sm font-medium">
+                Adet
+              </label>
+
+              <Input
+                id="item-quantity"
+                type="number"
+                min="1"
+                step="1"
+                value={quantity}
+                onChange={(e) => {
+                  setQuantity(e.target.value);
+                  setError("");
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="item-image" className="text-sm font-medium">
+              Eşya Görseli{" "}
+              <span className="font-normal text-xs text-muted-foreground">
+                (Opsiyonel)
+              </span>
+            </label>
+
+            <Input
+              id="item-image"
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              disabled={isImageLoading}
+              onChange={(e) => onImageChange(e.target.files[0])}
+              className="file:mr-3 file:cursor-pointer file:font-medium"
+            />
+
+            <p className="text-xs text-muted-foreground">
+              Maksimum dosya boyutu: 10 MB
+            </p>
+          </div>
         </div>
 
         <div className="relative flex min-h-32 items-center justify-center overflow-hidden rounded-xl border border-dashed bg-[#FCF5ED]">
@@ -193,7 +197,10 @@ function ItemForm({
       {imageWarning && <p className="text-sm text-amber-700">{imageWarning}</p>}
 
       <div className="flex flex-wrap items-center gap-2">
-        <ToggleChip pressed={isFragile} onClick={() => setIsFragile(!isFragile)}>
+        <ToggleChip
+          pressed={isFragile}
+          onClick={() => setIsFragile(!isFragile)}
+        >
           Kırılabilir
         </ToggleChip>
 
