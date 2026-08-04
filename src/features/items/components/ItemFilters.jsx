@@ -1,5 +1,8 @@
 import { Button } from "@/components/ui/button";
 
+const selectClassName =
+  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
+
 function ItemFilters({
   rooms,
   boxes,
@@ -15,7 +18,7 @@ function ItemFilters({
   hasActiveFilters,
 }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <div className="space-y-2">
         <label htmlFor="room-filter" className="text-sm font-medium">
           Odaya Göre Filtrele
@@ -25,7 +28,7 @@ function ItemFilters({
           id="room-filter"
           value={roomFilter}
           onChange={(e) => onRoomFilterChange(e.target.value)}
-          className="h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+          className={selectClassName}
         >
           <option value="Tümü">Tüm Odalar</option>
 
@@ -46,7 +49,7 @@ function ItemFilters({
           id="box-filter"
           value={boxFilter}
           onChange={(e) => setBoxFilter(e.target.value)}
-          className="h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+          className={selectClassName}
         >
           <option value="Tümü">Tüm Kutular</option>
 
@@ -65,6 +68,7 @@ function ItemFilters({
           })}
         </select>
       </div>
+
       <div className="space-y-2">
         <label htmlFor="fragile-filter" className="text-sm font-medium">
           Kırılabilir
@@ -74,7 +78,7 @@ function ItemFilters({
           id="fragile-filter"
           value={fragileFilter}
           onChange={(e) => setFragileFilter(e.target.value)}
-          className="h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+          className={selectClassName}
         >
           <option value="Tümü">Tümü</option>
           <option value="Evet">Evet</option>
@@ -91,14 +95,15 @@ function ItemFilters({
           id="valuable-filter"
           value={valuableFilter}
           onChange={(e) => setValuableFilter(e.target.value)}
-          className="h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+          className={selectClassName}
         >
           <option value="Tümü">Tümü</option>
           <option value="Evet">Evet</option>
           <option value="Hayır">Hayır</option>
         </select>
       </div>
-      <div className="flex justify-end">
+
+      <div className="sm:col-span-2 lg:col-span-4">
         <Button
           type="button"
           variant="outline"

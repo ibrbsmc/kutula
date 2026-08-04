@@ -19,6 +19,11 @@ function BoxesPage() {
     return savedBoxes ? JSON.parse(savedBoxes) : [];
   });
 
+  const [items] = useState(() => {
+    const savedItems = localStorage.getItem("kutula-items");
+    return savedItems ? JSON.parse(savedItems) : [];
+  });
+
   const [error, setError] = useState("");
   const [editingBoxId, setEditingBoxId] = useState(null);
   const [boxStatus, setBoxStatus] = useState("Hazırlanıyor");
@@ -204,6 +209,7 @@ function BoxesPage() {
           boxes={filteredBoxes}
           totalBoxCount={boxes.length}
           rooms={rooms}
+          items={items}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />

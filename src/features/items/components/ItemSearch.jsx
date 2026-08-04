@@ -1,3 +1,4 @@
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 function ItemSearch({ searchTerm, setSearchTerm }) {
@@ -7,13 +8,18 @@ function ItemSearch({ searchTerm, setSearchTerm }) {
         Eşya Ara
       </label>
 
-      <Input
-        id="item-search"
-        type="search"
-        placeholder="Örneğin: Bardak"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+
+        <Input
+          id="item-search"
+          type="search"
+          placeholder="Örneğin: Bardak"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-8"
+        />
+      </div>
     </div>
   );
 }

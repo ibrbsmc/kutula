@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { DoorOpen, Pencil, Trash2 } from "lucide-react";
+import { DoorOpen, PackageOpen, Pencil, Trash2 } from "lucide-react";
 
 const STATUS_STYLES = {
   Hazırlanıyor: "bg-amber-100 text-amber-800",
@@ -8,7 +8,7 @@ const STATUS_STYLES = {
   Açıldı: "bg-slate-200 text-slate-700",
 };
 
-function BoxCard({ box, roomName, onEdit, onDelete }) {
+function BoxCard({ box, roomName, itemCount, onEdit, onDelete }) {
   const statusClassName =
     STATUS_STYLES[box.status] ?? "bg-slate-200 text-slate-700";
 
@@ -18,7 +18,7 @@ function BoxCard({ box, roomName, onEdit, onDelete }) {
         <img
           src="/favicon.png"
           alt="Kutu"
-          className="size-32 object-contain drop-shadow-sm"
+          className="size-16 object-contain drop-shadow-sm"
         />
 
         <div className="absolute right-3 top-3 flex gap-2">
@@ -57,10 +57,17 @@ function BoxCard({ box, roomName, onEdit, onDelete }) {
           Kutu #{box.number}
         </h3>
 
-        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <DoorOpen className="size-4 text-[#E08149]" />
-          {roomName}
-        </span>
+        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-black">
+          <span className="flex items-center gap-1.5">
+            <DoorOpen className="size-4 text-[#E08149]" />
+            {roomName}
+          </span>
+
+          <span className="flex items-center gap-1.5">
+            <PackageOpen className="size-4 text-[#E08149]" />
+            {itemCount} Eşya
+          </span>
+        </div>
       </div>
     </div>
   );

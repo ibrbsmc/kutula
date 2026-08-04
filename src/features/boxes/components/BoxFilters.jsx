@@ -13,7 +13,7 @@ function BoxFilters({
   hasActiveFilters,
 }) {
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border bg-white p-4 shadow-sm sm:flex-row sm:items-end sm:p-5">
+    <div className="flex max-w-2xl flex-col gap-4 rounded-2xl border bg-white p-4 shadow-sm sm:flex-row sm:items-end sm:p-5">
       <div className="w-full space-y-2 sm:max-w-xs">
         <label htmlFor="status-filter" className="text-sm font-medium">
           Duruma Göre Filtrele

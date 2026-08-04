@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import resizeImage from "@/lib/resizeImage";
 import ItemForm from "./components/ItemForm";
 import ItemList from "./components/ItemList";
 import ItemSearch from "./components/ItemSearch";
@@ -29,6 +30,9 @@ function ItemsPage() {
   const [isFragile, setIsFragile] = useState(false);
   const [isValuable, setIsValuable] = useState(false);
   const [quantity, setQuantity] = useState("1");
+  const [itemImage, setItemImage] = useState("");
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const [imageWarning, setImageWarning] = useState("");
   const [editingItemId, setEditingItemId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [roomFilter, setRoomFilter] = useState("Tümü");
@@ -40,6 +44,37 @@ function ItemsPage() {
   useEffect(() => {
     localStorage.setItem("kutula-items", JSON.stringify(items));
   }, [items]);
+
+  async function handleImageChange(file) {
+    if (!file) {
+      return;
+    }
+
+    setIsImageLoading(true);
+    setError("");
+    setImageWarning("");
+
+    try {
+      const { resizedImage, isLowResolution } = await resizeImage(file);
+
+      setItemImage(resizedImage);
+
+      if (isLowResolution) {
+        setImageWarning(
+          "Bu görsel düşük çözünürlüklü olduğu için kartta daha az net görünebilir.",
+        );
+      }
+    } catch (imageError) {
+      setError(imageError.message);
+    } finally {
+      setIsImageLoading(false);
+    }
+  }
+
+  function handleRemoveImage() {
+    setItemImage("");
+    setImageWarning("");
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -82,6 +117,7 @@ function ItemsPage() {
                 quantity: (item.quantity ?? 1) + parsedQuantity,
                 isFragile: item.isFragile || isFragile,
                 isValuable: item.isValuable || isValuable,
+                image: itemImage || item.image,
               };
             }
 
@@ -100,6 +136,7 @@ function ItemsPage() {
               quantity: parsedQuantity,
               isFragile,
               isValuable,
+              image: itemImage,
             };
           }
 
@@ -117,6 +154,7 @@ function ItemsPage() {
             quantity: (item.quantity ?? 1) + parsedQuantity,
             isFragile: item.isFragile || isFragile,
             isValuable: item.isValuable || isValuable,
+            image: itemImage || item.image,
           };
         }
 
@@ -139,6 +177,7 @@ function ItemsPage() {
         quantity: parsedQuantity,
         isFragile,
         isValuable,
+        image: itemImage,
       };
 
       setItems([...items, newItem]);
@@ -155,6 +194,8 @@ function ItemsPage() {
     setQuantity("1");
     setIsFragile(false);
     setIsValuable(false);
+    setItemImage("");
+    setImageWarning("");
     setError("");
   }
 
@@ -193,6 +234,8 @@ function ItemsPage() {
     setQuantity(String(item.quantity ?? 1));
     setIsFragile(Boolean(item.isFragile));
     setIsValuable(Boolean(item.isValuable));
+    setItemImage(item.image ?? "");
+    setImageWarning("");
     setError("");
   }
 
@@ -260,10 +303,15 @@ function ItemsPage() {
     setValuableFilter("Tümü");
   }
 
+  const totalItemCount = filteredItems.reduce(
+    (total, item) => total + (item.quantity ?? 1),
+    0,
+  );
+
   return (
     <section className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Eşyalar</h1>
+        <h1 className="text-3xl font-bold text-[#3B2A22]">Eşyalar</h1>
 
         <p className="text-muted-foreground">
           Kutuların içindeki eşyaları buradan yönetebilirsin.
@@ -282,41 +330,55 @@ function ItemsPage() {
         setIsFragile={setIsFragile}
         isValuable={isValuable}
         setIsValuable={setIsValuable}
+        itemImage={itemImage}
+        isImageLoading={isImageLoading}
+        imageWarning={imageWarning}
+        onImageChange={handleImageChange}
+        onRemoveImage={handleRemoveImage}
         error={error}
         setError={setError}
         isEditing={editingItemId !== null}
         onCancelEdit={handleCancelEdit}
         onSubmit={handleSubmit}
       />
-      <ItemSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      <ItemFilters
-        rooms={rooms}
-        boxes={availableFilterBoxes}
-        roomFilter={roomFilter}
-        boxFilter={boxFilter}
-        fragileFilter={fragileFilter}
-        valuableFilter={valuableFilter}
-        onRoomFilterChange={handleRoomFilterChange}
-        setBoxFilter={setBoxFilter}
-        setFragileFilter={setFragileFilter}
-        setValuableFilter={setValuableFilter}
-        onClearFilters={handleClearFilters}
-        hasActiveFilters={hasActiveFilters}
-      />
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-[#3B2A22]">
+          Kayıtlı Eşyalar ({totalItemCount} adet)
+        </h2>
 
-      <ItemList
-        items={filteredItems}
-        boxes={boxes}
-        rooms={rooms}
-        onEditItem={handleEditItem}
-        onDeleteItem={handleDeleteItem}
-        emptyMessage={
-          hasActiveFilters
-            ? "Seçtiğin ölçütlere uygun eşya bulunamadı."
-            : "Henüz kayıtlı eşya bulunmuyor."
-        }
-      />
+        <div className="max-w-4xl space-y-5 rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
+          <ItemSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+          <ItemFilters
+            rooms={rooms}
+            boxes={availableFilterBoxes}
+            roomFilter={roomFilter}
+            boxFilter={boxFilter}
+            fragileFilter={fragileFilter}
+            valuableFilter={valuableFilter}
+            onRoomFilterChange={handleRoomFilterChange}
+            setBoxFilter={setBoxFilter}
+            setFragileFilter={setFragileFilter}
+            setValuableFilter={setValuableFilter}
+            onClearFilters={handleClearFilters}
+            hasActiveFilters={hasActiveFilters}
+          />
+        </div>
+
+        <ItemList
+          items={filteredItems}
+          boxes={boxes}
+          rooms={rooms}
+          onEditItem={handleEditItem}
+          onDeleteItem={handleDeleteItem}
+          emptyMessage={
+            hasActiveFilters
+              ? "Seçtiğin ölçütlere uygun eşya bulunamadı."
+              : "Henüz kayıtlı eşya bulunmuyor."
+          }
+        />
+      </div>
 
       <DeleteConfirmDialog
         open={itemToDelete !== null}

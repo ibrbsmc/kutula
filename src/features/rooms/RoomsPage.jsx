@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import RoomForm from "./components/RoomForm";
 import RoomList from "./components/RoomList";
-import resizeRoomImage from "./resizeRoomImage";
+import resizeImage from "@/lib/resizeImage";
 
 function RoomsPage() {
   const [rooms, setRooms] = useState(() => {
@@ -49,7 +49,7 @@ function RoomsPage() {
     setImageWarning("");
 
     try {
-      const { resizedImage, isLowResolution } = await resizeRoomImage(file);
+      const { resizedImage, isLowResolution } = await resizeImage(file);
 
       setRoomImage(resizedImage);
 
