@@ -1,5 +1,8 @@
 import { Button } from "@/components/ui/button";
 
+const selectClassName =
+  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
+
 function BoxFilters({
   rooms,
   statusFilter,
@@ -10,8 +13,8 @@ function BoxFilters({
   hasActiveFilters,
 }) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row">
-      <div className="w-full max-w-xs space-y-2">
+    <div className="flex flex-col gap-4 rounded-2xl border bg-white p-4 shadow-sm sm:flex-row sm:items-end sm:p-5">
+      <div className="w-full space-y-2 sm:max-w-xs">
         <label htmlFor="status-filter" className="text-sm font-medium">
           Duruma Göre Filtrele
         </label>
@@ -20,7 +23,7 @@ function BoxFilters({
           id="status-filter"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+          className={selectClassName}
         >
           <option value="Tümü">Tümü</option>
           <option value="Hazırlanıyor">Hazırlanıyor</option>
@@ -30,7 +33,7 @@ function BoxFilters({
         </select>
       </div>
 
-      <div className="w-full max-w-xs space-y-2">
+      <div className="w-full space-y-2 sm:max-w-xs">
         <label htmlFor="room-filter" className="text-sm font-medium">
           Odaya Göre Filtrele
         </label>
@@ -39,7 +42,7 @@ function BoxFilters({
           id="room-filter"
           value={roomFilter}
           onChange={(e) => setRoomFilter(e.target.value)}
-          className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+          className={selectClassName}
         >
           <option value="Tümü">Tüm Odalar</option>
 
@@ -51,16 +54,14 @@ function BoxFilters({
         </select>
       </div>
 
-      <div className="flex items-end">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onClearFilters}
-          disabled={!hasActiveFilters}
-        >
-          Filtreleri Temizle
-        </Button>
-      </div>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onClearFilters}
+        disabled={!hasActiveFilters}
+      >
+        Filtreleri Temizle
+      </Button>
     </div>
   );
 }

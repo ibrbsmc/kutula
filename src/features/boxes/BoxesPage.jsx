@@ -161,9 +161,9 @@ function BoxesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <section className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Kutular</h1>
+        <h1 className="text-3xl font-bold text-[#3B2A22]">Kutular</h1>
 
         <p className="text-muted-foreground">
           Taşınma kutularını buradan yönetebilirsin.
@@ -186,7 +186,7 @@ function BoxesPage() {
       />
 
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">
+        <h2 className="text-xl font-semibold text-[#3B2A22]">
           Kayıtlı Kutular ({boxes.length})
         </h2>
 
@@ -226,7 +226,7 @@ function BoxesPage() {
         }}
         onConfirm={handleConfirmDelete}
       />
-    </div>
+    </section>
   );
 }
 
