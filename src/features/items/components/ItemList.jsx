@@ -1,8 +1,9 @@
 import ItemCard from "./ItemCard";
+import EmptyState from "@/components/EmptyState";
 
 function ItemList({ items, boxes, rooms, onEditItem, onDeleteItem, emptyMessage }) {
   if (items.length === 0) {
-    return <p className="text-sm text-muted-foreground">{emptyMessage}</p>;
+    return <EmptyState icon="/items.png" message={emptyMessage} />;
   }
 
   return (

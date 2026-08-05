@@ -1,13 +1,18 @@
 import BoxCard from "./BoxCard";
+import EmptyState from "@/components/EmptyState";
 
 function BoxList({ boxes, totalBoxCount, rooms, items, onEdit, onDelete }) {
   if (boxes.length === 0) {
     return (
-      <p className="text-muted-foreground">
-        {totalBoxCount === 0
-          ? "Henüz kutu eklenmedi."
-          : "Bu filtreye uygun kutu bulunamadı."}
-      </p>
+      <EmptyState
+        icon="/boxes.png"
+        iconClassName="scale-125"
+        message={
+          totalBoxCount === 0
+            ? "Henüz kutu eklenmedi."
+            : "Bu filtreye uygun kutu bulunamadı."
+        }
+      />
     );
   }
 

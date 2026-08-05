@@ -12,7 +12,7 @@ function ToggleChip({ pressed, onClick, children }) {
       type="button"
       aria-pressed={pressed}
       onClick={onClick}
-      className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
+      className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
         pressed
           ? "border-[#E08149] bg-[#E08149]/10 text-[#C96E39]"
           : "border-input bg-transparent text-muted-foreground hover:bg-muted"

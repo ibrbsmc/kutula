@@ -1,9 +1,10 @@
 import RoomCard from "./RoomCard";
+import EmptyState from "@/components/EmptyState";
 
 function RoomList({ roomsWithStats, onEdit, onDelete }) {
   if (roomsWithStats.length === 0) {
     return (
-      <p className="text-muted-foreground">Henüz bir oda oluşturulmadı.</p>
+      <EmptyState icon="/house.png" message="Henüz bir oda oluşturulmadı." />
     );
   }
 

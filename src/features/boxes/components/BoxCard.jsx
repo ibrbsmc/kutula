@@ -18,7 +18,7 @@ function BoxCard({ box, roomName, itemCount, onEdit, onDelete }) {
         <img
           src="/favicon.png"
           alt="Kutu"
-          className="size-16 object-contain drop-shadow-sm"
+          className="size-20 scale-125 object-contain drop-shadow-sm"
         />
 
         <div className="absolute right-3 top-3 flex gap-2">
