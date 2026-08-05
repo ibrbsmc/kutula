@@ -1,6 +1,6 @@
 # Kutula
 
-Taşınma sürecinde odaları, kutuları ve eşyaları takip etmek için basit bir web uygulaması.
+Taşınma sürecinde odaları, kutuları ve eşyaları takip etmek için bir web uygulaması.
 
 ## Özellikler
 
@@ -27,7 +27,7 @@ npm run dev
 
 ## İletişim formu için gerekli ayar
 
-`src/features/contact/ContactPage.jsx` dosyasında bir `WEB3FORMS_ACCESS_KEY` değişkeni bulunur. Formun çalışması için bu değerin [web3forms.com](https://web3forms.com) üzerinden alınan geçerli bir access key olması gerekir.
+src/features/contact/ContactPage.jsx dosyasında bir WEB3FORMS_ACCESS_KEY değişkeni bulunur. Formun çalışması için bu değerin [web3forms.com](https://web3forms.com) üzerinden alınan geçerli bir access key olması gerekir.
 
 ## Klasör yapısı
 
@@ -47,4 +47,4 @@ public/             Statik görseller
 
 ## Veri saklama
 
-Uygulama üç `localStorage` anahtarı kullanır: `kutula-rooms`, `kutula-boxes`, `kutula-items`. Bir oda silindiğinde bağlı kutular ve eşyalar da silinir; bir kutu silindiğinde bağlı eşyalar da silinir.
+Uygulama üç localStorage anahtarı kullanır: kutula-rooms, kutula-boxes, kutula-items. Bir oda silindiğinde bağlı kutular ve eşyalar da silinir; bir kutu silindiğinde bağlı eşyalar da silinir.
