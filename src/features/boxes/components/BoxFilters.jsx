@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-
-const selectClassName =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
+import { Label } from "@/components/ui/label";
+import { BOX_STATUS_OPTIONS } from "@/lib/boxStatus";
+import { selectClassName } from "@/lib/formStyles";
 
 function BoxFilters({
   rooms,
@@ -15,9 +15,7 @@ function BoxFilters({
   return (
     <div className="flex max-w-2xl flex-col gap-4 rounded-2xl border bg-white p-4 shadow-sm sm:flex-row sm:items-end sm:p-5">
       <div className="w-full space-y-2 sm:max-w-xs">
-        <label htmlFor="status-filter" className="text-sm font-medium">
-          Duruma Göre Filtrele
-        </label>
+        <Label htmlFor="status-filter">Duruma Göre Filtrele</Label>
 
         <select
           id="status-filter"
@@ -26,17 +24,17 @@ function BoxFilters({
           className={selectClassName}
         >
           <option value="Tümü">Tümü</option>
-          <option value="Hazırlanıyor">Hazırlanıyor</option>
-          <option value="Taşınmaya Hazır">Taşınmaya Hazır</option>
-          <option value="Taşındı">Taşındı</option>
-          <option value="Açıldı">Açıldı</option>
+
+          {BOX_STATUS_OPTIONS.map((status) => (
+            <option key={status} value={status}>
+              {status}
+            </option>
+          ))}
         </select>
       </div>
 
       <div className="w-full space-y-2 sm:max-w-xs">
-        <label htmlFor="room-filter" className="text-sm font-medium">
-          Odaya Göre Filtrele
-        </label>
+        <Label htmlFor="room-filter">Odaya Göre Filtrele</Label>
 
         <select
           id="room-filter"

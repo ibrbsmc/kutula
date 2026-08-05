@@ -4,6 +4,7 @@ import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import BoxFilters from "./components/BoxFilters";
 import BoxForm from "./components/BoxForm";
 import BoxList from "./components/BoxList";
+import BoxItemsDialog from "./components/BoxItemsDialog";
 
 function BoxesPage() {
   const [rooms] = useState(() => {
@@ -19,10 +20,12 @@ function BoxesPage() {
     return savedBoxes ? JSON.parse(savedBoxes) : [];
   });
 
-  const [items] = useState(() => {
+  const [items, setItems] = useState(() => {
     const savedItems = localStorage.getItem("kutula-items");
     return savedItems ? JSON.parse(savedItems) : [];
   });
+
+  const [selectedBox, setSelectedBox] = useState(null);
 
   const [error, setError] = useState("");
   const [editingBoxId, setEditingBoxId] = useState(null);
@@ -34,6 +37,10 @@ function BoxesPage() {
   useEffect(() => {
     localStorage.setItem("kutula-boxes", JSON.stringify(boxes));
   }, [boxes]);
+
+  useEffect(() => {
+    localStorage.setItem("kutula-items", JSON.stringify(items));
+  }, [items]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -86,9 +93,6 @@ function BoxesPage() {
   };
 
   function handleDelete(boxId) {
-    const savedItems = localStorage.getItem("kutula-items");
-    const items = savedItems ? JSON.parse(savedItems) : [];
-
     const box = boxes.find((box) => String(box.id) === String(boxId));
     const itemCount = items.filter(
       (item) => String(item.boxId) === String(boxId),
@@ -106,14 +110,11 @@ function BoxesPage() {
       return;
     }
 
-    const savedItems = localStorage.getItem("kutula-items");
-    const items = savedItems ? JSON.parse(savedItems) : [];
-
-    const remainingItems = items.filter(
-      (item) => String(item.boxId) !== String(boxToDelete.id),
+    setItems((currentItems) =>
+      currentItems.filter(
+        (item) => String(item.boxId) !== String(boxToDelete.id),
+      ),
     );
-
-    localStorage.setItem("kutula-items", JSON.stringify(remainingItems));
 
     setBoxes((currentBoxes) =>
       currentBoxes.filter(
@@ -165,6 +166,45 @@ function BoxesPage() {
     setRoomFilter("Tümü");
   }
 
+  function handleAddItemToSelectedBox(itemData) {
+    if (!selectedBox) {
+      return;
+    }
+
+    const newItem = {
+      id: Date.now(),
+      boxId: Number(selectedBox.id),
+      ...itemData,
+    };
+
+    setItems((currentItems) => [...currentItems, newItem]);
+    toast.success("Eşya eklendi.");
+  }
+
+  function handleUpdateItem(itemId, updates) {
+    setItems((currentItems) =>
+      currentItems.map((item) =>
+        item.id === itemId ? { ...item, ...updates } : item,
+      ),
+    );
+    toast.success("Eşya güncellendi.");
+  }
+
+  function handleDeleteItem(itemId) {
+    setItems((currentItems) =>
+      currentItems.filter((item) => item.id !== itemId),
+    );
+    toast.success("Eşya silindi.");
+  }
+
+  const selectedBoxRoom = selectedBox
+    ? rooms.find((room) => String(room.id) === String(selectedBox.roomId))
+    : null;
+
+  const selectedBoxItems = selectedBox
+    ? items.filter((item) => String(item.boxId) === String(selectedBox.id))
+    : [];
+
   return (
     <section className="space-y-6">
       <div>
@@ -210,10 +250,26 @@ function BoxesPage() {
           totalBoxCount={boxes.length}
           rooms={rooms}
           items={items}
+          onOpenItems={setSelectedBox}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
       </div>
+
+      <BoxItemsDialog
+        box={selectedBox}
+        roomName={selectedBoxRoom ? selectedBoxRoom.name : "Oda bulunamadı"}
+        items={selectedBoxItems}
+        open={selectedBox !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedBox(null);
+          }
+        }}
+        onAddItem={handleAddItemToSelectedBox}
+        onUpdateItem={handleUpdateItem}
+        onDeleteItem={handleDeleteItem}
+      />
 
       <DeleteConfirmDialog
         open={boxToDelete !== null}

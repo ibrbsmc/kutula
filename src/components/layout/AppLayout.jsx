@@ -10,7 +10,7 @@ function AppLayout() {
       <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
         <MobileNav />
 
-        <main className="flex-1 bg-[#FCF5ED] p-6">
+        <main className="flex-1 overflow-x-hidden bg-[#FCF5ED] p-6">
           <Outlet />
         </main>
       </div>

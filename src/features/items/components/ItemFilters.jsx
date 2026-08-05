@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-
-const selectClassName =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
+import { Label } from "@/components/ui/label";
+import { selectClassName } from "@/lib/formStyles";
 
 function ItemFilters({
   rooms,
@@ -20,9 +19,7 @@ function ItemFilters({
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <div className="space-y-2">
-        <label htmlFor="room-filter" className="text-sm font-medium">
-          Odaya Göre Filtrele
-        </label>
+        <Label htmlFor="room-filter">Odaya Göre Filtrele</Label>
 
         <select
           id="room-filter"
@@ -41,9 +38,7 @@ function ItemFilters({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="box-filter" className="text-sm font-medium">
-          Kutuya Göre Filtrele
-        </label>
+        <Label htmlFor="box-filter">Kutuya Göre Filtrele</Label>
 
         <select
           id="box-filter"
@@ -70,9 +65,7 @@ function ItemFilters({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="fragile-filter" className="text-sm font-medium">
-          Kırılabilir
-        </label>
+        <Label htmlFor="fragile-filter">Kırılabilir</Label>
 
         <select
           id="fragile-filter"
@@ -87,9 +80,7 @@ function ItemFilters({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="valuable-filter" className="text-sm font-medium">
-          Değerli
-        </label>
+        <Label htmlFor="valuable-filter">Değerli</Label>
 
         <select
           id="valuable-filter"

@@ -1,24 +1,30 @@
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { DoorOpen, PackageOpen, Pencil, Trash2 } from "lucide-react";
+import { BOX_STATUS_BADGE_STYLES } from "@/lib/boxStatus";
 
-const STATUS_STYLES = {
-  Hazırlanıyor: "bg-amber-100 text-amber-800",
-  "Taşınmaya Hazır": "bg-sky-100 text-sky-800",
-  Taşındı: "bg-emerald-100 text-emerald-800",
-  Açıldı: "bg-slate-200 text-slate-700",
-};
-
-function BoxCard({ box, roomName, itemCount, onEdit, onDelete }) {
+function BoxCard({ box, roomName, itemCount, onOpenItems, onEdit, onDelete }) {
   const statusClassName =
-    STATUS_STYLES[box.status] ?? "bg-slate-200 text-slate-700";
+    BOX_STATUS_BADGE_STYLES[box.status] ?? "bg-slate-200 text-slate-700";
 
   return (
-    <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => onOpenItems(box)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpenItems(box);
+        }
+      }}
+      className="cursor-pointer overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md"
+    >
       <div className="relative flex aspect-16/10 items-center justify-center overflow-hidden bg-linear-to-br from-[#F6D4BE] via-[#FCF5ED] to-[#E7B18F]">
         <img
           src="/favicon.png"
           alt="Kutu"
-          className="size-20 scale-125 object-contain drop-shadow-sm"
+          className="size-20 scale-135 object-contain drop-shadow-sm"
         />
 
         <div className="absolute right-3 top-3 flex gap-2">
@@ -26,7 +32,10 @@ function BoxCard({ box, roomName, itemCount, onEdit, onDelete }) {
             type="button"
             variant="outline"
             size="icon"
-            onClick={() => onEdit(box.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(box.id);
+            }}
             className="border-white/70 bg-white/90 shadow-sm backdrop-blur hover:bg-white"
             aria-label={`Kutu ${box.number} düzenle`}
           >
@@ -37,7 +46,10 @@ function BoxCard({ box, roomName, itemCount, onEdit, onDelete }) {
             type="button"
             variant="outline"
             size="icon"
-            onClick={() => onDelete(box.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(box.id);
+            }}
             className="border-white/70 bg-white/90 shadow-sm backdrop-blur hover:bg-white"
             aria-label={`Kutu ${box.number} sil`}
           >
@@ -45,11 +57,9 @@ function BoxCard({ box, roomName, itemCount, onEdit, onDelete }) {
           </Button>
         </div>
 
-        <span
-          className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-xs font-medium ${statusClassName}`}
-        >
+        <Badge className={`absolute left-3 top-3 ${statusClassName}`}>
           {box.status}
-        </span>
+        </Badge>
       </div>
 
       <div className="space-y-2 p-4">
@@ -68,6 +78,10 @@ function BoxCard({ box, roomName, itemCount, onEdit, onDelete }) {
             {itemCount} Eşya
           </span>
         </div>
+
+        <p className="text-xs text-muted-foreground">
+          Eşyaları görmek için karta tıkla
+        </p>
       </div>
     </div>
   );

@@ -164,14 +164,8 @@ function ItemsPage() {
       setItems(updatedItems);
       toast.success("Eşya adedi güncellendi.");
     } else {
-      const newItemId =
-        items.reduce(
-          (highestId, item) => Math.max(highestId, Number(item.id)),
-          0,
-        ) + 1;
-
       const newItem = {
-        id: newItemId,
+        id: Date.now(),
         boxId: Number(selectedBoxId),
         name: cleanedItemName,
         quantity: parsedQuantity,
@@ -375,7 +369,7 @@ function ItemsPage() {
           emptyMessage={
             hasActiveFilters
               ? "Seçtiğin ölçütlere uygun eşya bulunamadı."
-              : "Henüz kayıtlı eşya bulunmuyor."
+              : "Henüz eşya eklenmedi."
           }
         />
       </div>

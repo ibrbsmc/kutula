@@ -3,9 +3,7 @@ import EmptyState from "@/components/EmptyState";
 
 function RoomList({ roomsWithStats, onEdit, onDelete }) {
   if (roomsWithStats.length === 0) {
-    return (
-      <EmptyState icon="/house.png" message="Henüz bir oda oluşturulmadı." />
-    );
+    return <EmptyState icon="/empty_room.png" message="Henüz oda eklenmedi." />;
   }
 
   return (

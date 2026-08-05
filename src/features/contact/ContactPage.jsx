@@ -2,17 +2,19 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Clock, Mail, MessageCircle, Send, Sparkles } from "lucide-react";
 
 // TODO: Web3Forms hesabından aldığın Access Key'i buraya yapıştır.
 // Ücretsiz key almak için: https://web3forms.com
-const WEB3FORMS_ACCESS_KEY = "BURAYA_WEB3FORMS_ACCESS_KEY_YAZ";
+const WEB3FORMS_ACCESS_KEY = "4ee0b073-1bd5-451c-aa5c-426db960f063";
 
 const infoItems = [
   {
     icon: Mail,
     title: "E-posta",
-    description: "Mesajın doğrudan ekibimize ulaşır.",
+    description: "Mesajın doğrudan bize ulaşır.",
   },
   {
     icon: Clock,
@@ -117,15 +119,10 @@ function ContactPage() {
           </div>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4 bg-white p-6 sm:p-8"
-        >
+        <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 sm:p-8">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <label htmlFor="contact-first-name" className="text-sm font-medium">
-                Ad
-              </label>
+              <Label htmlFor="contact-first-name">Ad</Label>
 
               <Input
                 id="contact-first-name"
@@ -137,9 +134,7 @@ function ContactPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="contact-last-name" className="text-sm font-medium">
-                Soyad
-              </label>
+              <Label htmlFor="contact-last-name">Soyad</Label>
 
               <Input
                 id="contact-last-name"
@@ -153,9 +148,7 @@ function ContactPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <label htmlFor="contact-email" className="text-sm font-medium">
-                E-posta
-              </label>
+              <Label htmlFor="contact-email">E-posta</Label>
 
               <Input
                 id="contact-email"
@@ -168,12 +161,12 @@ function ContactPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="contact-subject" className="text-sm font-medium">
+              <Label htmlFor="contact-subject">
                 Konu{" "}
                 <span className="font-normal text-xs text-muted-foreground">
                   (Opsiyonel)
                 </span>
-              </label>
+              </Label>
 
               <Input
                 id="contact-subject"
@@ -185,18 +178,15 @@ function ContactPage() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="contact-message" className="text-sm font-medium">
-              Mesaj
-            </label>
+            <Label htmlFor="contact-message">Mesaj</Label>
 
-            <textarea
+            <Textarea
               id="contact-message"
               required
               rows={5}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Mesajını buraya yaz..."
-              className="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             />
           </div>
 

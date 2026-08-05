@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertTriangle,
   DoorOpen,
@@ -50,9 +51,9 @@ function ItemCard({ item, roomName, boxLabel, onEdit, onDelete }) {
           </Button>
         </div>
 
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-[#3B2A22] shadow-sm backdrop-blur">
+        <Badge className="absolute left-3 top-3 bg-white/90 text-[#3B2A22] shadow-sm backdrop-blur">
           {item.quantity ?? 1} adet
-        </span>
+        </Badge>
       </div>
 
       <div className="space-y-2 p-4">

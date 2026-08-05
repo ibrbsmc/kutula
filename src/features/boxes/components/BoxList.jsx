@@ -1,12 +1,19 @@
 import BoxCard from "./BoxCard";
 import EmptyState from "@/components/EmptyState";
 
-function BoxList({ boxes, totalBoxCount, rooms, items, onEdit, onDelete }) {
+function BoxList({
+  boxes,
+  totalBoxCount,
+  rooms,
+  items,
+  onOpenItems,
+  onEdit,
+  onDelete,
+}) {
   if (boxes.length === 0) {
     return (
       <EmptyState
-        icon="/boxes.png"
-        iconClassName="scale-125"
+        icon="/empty_box.png"
         message={
           totalBoxCount === 0
             ? "Henüz kutu eklenmedi."
@@ -37,6 +44,7 @@ function BoxList({ boxes, totalBoxCount, rooms, items, onEdit, onDelete }) {
             box={box}
             roomName={room ? room.name : "Oda bulunamadı"}
             itemCount={itemCount}
+            onOpenItems={onOpenItems}
             onEdit={onEdit}
             onDelete={onDelete}
           />

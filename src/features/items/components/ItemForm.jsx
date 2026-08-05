@@ -1,10 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ImagePlus, LoaderCircle, X } from "lucide-react";
-
-const selectClassName =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50";
+import { formSelectClassName } from "@/lib/formStyles";
 
 function ToggleChip({ pressed, onClick, children }) {
   return (
@@ -67,9 +66,7 @@ function ItemForm({
         <div className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="space-y-2">
-              <label htmlFor="item-box" className="text-sm font-medium">
-                Kutu
-              </label>
+              <Label htmlFor="item-box">Kutu</Label>
 
               <select
                 id="item-box"
@@ -79,10 +76,10 @@ function ItemForm({
                   setSelectedBoxId(e.target.value);
                   setError("");
                 }}
-                className={selectClassName}
+                className={formSelectClassName}
                 disabled={boxes.length === 0}
               >
-                <option value="">
+                <option value="" className="py-1.5">
                   {boxes.length === 0
                     ? "Önce bir kutu oluşturmalısın"
                     : "Kutu seç"}
@@ -94,7 +91,7 @@ function ItemForm({
                   );
 
                   return (
-                    <option key={box.id} value={box.id}>
+                    <option key={box.id} value={box.id} className="py-1.5">
                       {room?.name ?? "Oda bulunamadı"} - Kutu {box.number}
                     </option>
                   );
@@ -103,9 +100,7 @@ function ItemForm({
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="item-name" className="text-sm font-medium">
-                Eşya Adı
-              </label>
+              <Label htmlFor="item-name">Eşya Adı</Label>
 
               <Input
                 id="item-name"
@@ -119,9 +114,7 @@ function ItemForm({
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="item-quantity" className="text-sm font-medium">
-                Adet
-              </label>
+              <Label htmlFor="item-quantity">Adet</Label>
 
               <Input
                 id="item-quantity"
@@ -138,12 +131,12 @@ function ItemForm({
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="item-image" className="text-sm font-medium">
+            <Label htmlFor="item-image">
               Eşya Görseli{" "}
               <span className="font-normal text-xs text-muted-foreground">
                 (Opsiyonel)
               </span>
-            </label>
+            </Label>
 
             <Input
               id="item-image"
