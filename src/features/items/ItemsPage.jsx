@@ -338,7 +338,7 @@ function ItemsPage() {
 
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-[#3B2A22]">
-          Kayıtlı Eşyalar ({totalItemCount} adet)
+          Kayıtlı Eşyalar ({totalItemCount})
         </h2>
 
         <div className="max-w-4xl space-y-5 rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
